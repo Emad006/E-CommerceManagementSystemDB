@@ -49,6 +49,7 @@ Or download the [ZIP File](https://github.com/Emad006/E-CommerceManagementSystem
     ```bat
     startApp.bat
     ```
+    Double-click the script in File Explorer to execute it.
     If you get a security warning, click "More info" and then "Run anyway". I can assure you that the script is safe, but you can always check the contents before running it as it's just a simple command to run the Java application.
 
 ## Notes
