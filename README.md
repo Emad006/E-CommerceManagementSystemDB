@@ -37,19 +37,18 @@ Or download the [ZIP File](https://github.com/Emad006/E-CommerceManagementSystem
     chmod +x startApp.sh
     ```
 
-2. Run the application:
+2. Run the [`startApp.sh`](https://github.com/Emad006/E-CommerceManagementSystem/blob/main/startApp.sh) script in the terminal:
     ```sh
     ./startApp.sh
     ```
 
 ### On Windows
 
-1. Run the [`startApp.bat`](https://github.com/Emad006/E-CommerceManagementSystem/blob/main/startApp.bat) script:
+1. Run the [`startApp.bat`](https://github.com/Emad006/E-CommerceManagementSystem/blob/main/startApp.bat) script by double-clicking it in the file explorer:
 
     ```bat
     startApp.bat
     ```
-    Double-click the script in File Explorer to execute it.
     If you get a security warning, click "More info" and then "Run anyway". I can assure you that the script is safe, but you can always check the contents before running it as it's just a simple command to run the Java application.
 
 ## Notes
