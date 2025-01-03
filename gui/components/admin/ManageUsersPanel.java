@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import controllers.UserManager;
 import core.entities.User;
+import core.entities.Worker;
 import core.entities.Admin;
 import core.entities.Customer;
 import core.entities.SuperAdmin;
@@ -113,10 +114,10 @@ public class ManageUsersPanel {
         mainPanel.add(roleLabel, gbc);
 
         gbc.gridx = 1;
-        String[] roles = { "Admin", "Customer" };
+        String[] roles = { "Admin", "Worker", "Customer" };
         JComboBox<String> roleComboBox = new JComboBox<>(roles);
         roleComboBox.setPreferredSize(new Dimension(225, 30));
-        roleComboBox.setSelectedIndex(1);
+        roleComboBox.setSelectedIndex(2);
 
         // Prevent admin from creating another admin
         roleComboBox.addActionListener(e -> {
@@ -125,7 +126,7 @@ public class ManageUsersPanel {
                     JOptionPane.showMessageDialog(mainPanel, "Admin cannot create another admin.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                     roleComboBox.setSelectedIndex(1);
-                } else {
+                } else if (this.user instanceof SuperAdmin) {
                     // If super admin is adding another admin, disable irrelevant fields
                     // TODO: After implementing SuperAdmin class, check if User is an instance of
                     // SuperAdmin
@@ -136,7 +137,7 @@ public class ManageUsersPanel {
                     addressLabel.setVisible(false);
                     addressField.setVisible(false);
                 }
-            } else if (roleComboBox.getSelectedItem().equals("Customer")) {
+            } else if (roleComboBox.getSelectedItem().equals("Customer") || roleComboBox.getSelectedItem().equals("Worker")) {
                 genderLabel.setVisible(true);
                 genderComboBox.setVisible(true);
                 contactNoLabel.setVisible(true);
@@ -213,7 +214,7 @@ public class ManageUsersPanel {
             // Validations
 
             // Check if any field is empty
-            if (role.equals("Customer")) {
+            if (role.equals("Customer") || role.equals("Worker")) {
 
                 // Check for all fields
                 if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()
@@ -516,6 +517,22 @@ public class ManageUsersPanel {
                 contactNoField.setVisible(true);
                 addressLabel.setVisible(true);
                 addressField.setVisible(true);
+            } else if (user instanceof Worker) {
+                Worker worker = (Worker) user;
+                nameField.setText(worker.getName());
+                passwordField.setText(worker.getPassword());
+                confirmPasswordField.setText(worker.getPassword());
+                roleComboBox.setSelectedItem(worker.getRole());
+                genderComboBox.setSelectedItem(worker.getGender());
+                contactNoField.setText(worker.getContactNo());
+                addressField.setText(worker.getAddress());
+
+                genderLabel.setVisible(true);
+                genderComboBox.setVisible(true);
+                contactNoLabel.setVisible(true);
+                contactNoField.setVisible(true);
+                addressLabel.setVisible(true);
+                addressField.setVisible(true);
             }
         });
 
@@ -549,7 +566,7 @@ public class ManageUsersPanel {
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-            } else if (user instanceof Customer) {
+            } else if (user instanceof Customer || user instanceof Worker) {
                 // Check for all fields
                 if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()
                         || contactNo.isEmpty() || address.isEmpty()) {
@@ -600,7 +617,7 @@ public class ManageUsersPanel {
                     JOptionPane.showMessageDialog(mainPanel, "Cannot update admin or super-admin.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
-            } else if (user instanceof Customer) {
+            } else if (user instanceof Customer || user instanceof Worker) {
                 userManager.updateUser(name, email, password, role, gender, contactNo, address);
                 JOptionPane.showMessageDialog(mainPanel, "Updated user successfully.", "Success",
                         JOptionPane.INFORMATION_MESSAGE);
@@ -691,7 +708,7 @@ public class ManageUsersPanel {
         mainPanel.add(roleLabel, gbc);
 
         gbc.gridx = 1;
-        String[] roles = { "Admin", "Customer" };
+        String[] roles = { "Admin", "Worker", "Customer" };
         JComboBox<String> roleComboBox = new JComboBox<>(roles);
         roleComboBox.setPreferredSize(new Dimension(225, 30));
         roleComboBox.setEnabled(false);
@@ -795,6 +812,20 @@ public class ManageUsersPanel {
                 genderComboBox.setSelectedItem(customer.getGender());
                 contactNoField.setText(customer.getContactNo());
                 addressField.setText(customer.getAddress());
+
+                genderLabel.setVisible(true);
+                genderComboBox.setVisible(true);
+                contactNoLabel.setVisible(true);
+                contactNoField.setVisible(true);
+                addressLabel.setVisible(true);
+                addressField.setVisible(true);
+            } else if (user instanceof Worker) {
+                Worker worker = (Worker) user;
+                nameField.setText(worker.getName());
+                roleComboBox.setSelectedItem(worker.getRole());
+                genderComboBox.setSelectedItem(worker.getGender());
+                contactNoField.setText(worker.getContactNo());
+                addressField.setText(worker.getAddress());
 
                 genderLabel.setVisible(true);
                 genderComboBox.setVisible(true);
