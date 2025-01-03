@@ -12,6 +12,7 @@ import java.io.IOException;
 import interfaces.controllers.IUserManager;
 import core.entities.User;
 import core.entities.Admin;
+import core.entities.Worker;
 import core.entities.Customer;
 import core.entities.SuperAdmin;
 
@@ -50,6 +51,9 @@ public class UserManager implements IUserManager {
                 } else if (parts[3].equals("Customer")) {
                     Customer c = new Customer(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6]);
                     userList.add(c);
+                } else if (parts[3].equals("Worker")) {
+                    Worker w = new Worker(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6]);
+                    userList.add(w);
                 }
             }
             reader.close();
@@ -92,12 +96,17 @@ public class UserManager implements IUserManager {
     }
 
     // Add user. Method overloading cause of two types of User (this one is for
-    // Customer)
+    // Customer & Worker)
     // TODO: Validate data in front-end
     public void addUser(String name, String email, String password, String role, String gender, String contactNo,
             String address) {
-        Customer c = new Customer(name, email, password, role, gender, contactNo, address);
-        userList.add(c);
+        if (role.equals("Customer")) {
+            Customer c = new Customer(name, email, password, role, gender, contactNo, address);
+            userList.add(c);
+        } else if (role.equals("Worker")) {
+            Worker w = new Worker(name, email, password, role, gender, contactNo, address);
+            userList.add(w);
+        }
         dumpDataToFile();
     }
 
@@ -136,6 +145,11 @@ public class UserManager implements IUserManager {
                     SuperAdmin sa = (SuperAdmin) u;
                     User superAdmin = new SuperAdmin(sa.getName(), sa.getEmail(), sa.getPassword(), sa.getRole());
                     return superAdmin;
+                } else if (u instanceof Worker) {
+                    Worker w = (Worker) u;
+                    User worker = new Worker(w.getName(), w.getEmail(), w.getPassword(), w.getRole(), w.getGender(),
+                            w.getContactNo(), w.getAddress());
+                    return worker;
                 }
             }
         }
@@ -205,6 +219,11 @@ public class UserManager implements IUserManager {
                 data[i][3] = c.getGender();
                 data[i][4] = c.getContactNo();
                 data[i][5] = c.getAddress();
+            } else if(u instanceof Worker) {
+                Worker w = (Worker) u;
+                data[i][3] = w.getGender();
+                data[i][4] = w.getContactNo();
+                data[i][5] = w.getAddress();
             } else {
                 data[i][3] = "N/A";
                 data[i][4] = "N/A";
@@ -228,16 +247,10 @@ public class UserManager implements IUserManager {
             // Passing "true" would just append to the file.
             BufferedWriter writer = new BufferedWriter(new FileWriter("../database/userData.txt"));
             for (User u : userList) {
-                if (u instanceof SuperAdmin) {
+                if (u instanceof Admin || u instanceof SuperAdmin) {
                     // Type cast back to original object to run object specific methods
-                    SuperAdmin sa = (SuperAdmin) u;
-                    String t = sa.getName() + "^~^" + sa.getEmail() + "^~^" + sa.getPassword() + "^~^" + sa.getRole();
-                    writer.write(t);
-                    writer.newLine();
-                } else if (u instanceof Admin) {
-                    // Type cast back to original object to run object specific methods
-                    Admin a = (Admin) u;
-                    String t = a.getName() + "^~^" + a.getEmail() + "^~^" + a.getPassword() + "^~^" + a.getRole();
+                    // SuperAdmin u = (SuperAdmin) u;
+                    String t = u.getName() + "^~^" + u.getEmail() + "^~^" + u.getPassword() + "^~^" + u.getRole();
                     writer.write(t);
                     writer.newLine();
                 } else if (u instanceof Customer) {
@@ -245,6 +258,13 @@ public class UserManager implements IUserManager {
                     Customer c = (Customer) u;
                     String t = c.getName() + "^~^" + c.getEmail() + "^~^" + c.getPassword() + "^~^" + c.getRole()
                             + "^~^" + c.getGender() + "^~^" + c.getContactNo() + "^~^" + c.getAddress();
+                    writer.write(t);
+                    writer.newLine();
+                } else if (u instanceof Worker) {
+                    // Type cast back to original object to run object specific methods
+                    Worker w = (Worker) u;
+                    String t = w.getName() + "^~^" + w.getEmail() + "^~^" + w.getPassword() + "^~^" + w.getRole()
+                            + "^~^" + w.getGender() + "^~^" + w.getContactNo() + "^~^" + w.getAddress();
                     writer.write(t);
                     writer.newLine();
                 }
