@@ -4,6 +4,8 @@ import javax.swing.*;
 
 import controllers.UserManager;
 import core.entities.User;
+import core.entities.Admin;
+import core.entities.SuperAdmin;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -48,7 +50,12 @@ public class AdminDashboard implements ActionListener {
         frame.add(leftPanel);
         frame.add(mainPanel);
 
-        welcomeLabel = new JLabel("Welcome to the Admin Dashboard");
+        if (user instanceof Admin || user instanceof SuperAdmin) {
+            welcomeLabel = new JLabel("Welcome to the Admin Dashboard");
+        } else {
+            welcomeLabel = new JLabel("Welcome to the Employee Dashboard");
+        }
+
         welcomeLabel.setForeground(new Color(219, 226, 233));
         welcomeLabel.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 30));
         welcomeLabel.setBounds(200, 300, 500, 50);
@@ -74,16 +81,21 @@ public class AdminDashboard implements ActionListener {
     }
 
     private void initializeButtons() {
-        dashButton = createStyledButton("Dashboard", 5);
-        addUserButton = createStyledButton("Add User", 75);
-        updateUserButton = createStyledButton("Update User", 155);
-        deleteUserButton = createStyledButton("Delete User", 235);
-        listUsersButton = createStyledButton("List Users", 315);
-        addProductButton = createStyledButton("Add Product", 395);
-        updateProductButton = createStyledButton("Update Product", 475);
-        deleteProductButton = createStyledButton("Delete Product", 555);
-        listProductsButton = createStyledButton("List Products", 635);
-        logoutButton = createStyledButton("Log Out", 715);
+        boolean buttonStatus = true;
+
+        dashButton = createStyledButton("Dashboard", 5, buttonStatus);
+        addProductButton = createStyledButton("Add Product", 395, buttonStatus);
+        updateProductButton = createStyledButton("Update Product", 475, buttonStatus);
+        deleteProductButton = createStyledButton("Delete Product", 555, buttonStatus);
+        listProductsButton = createStyledButton("List Products", 635, buttonStatus);
+        logoutButton = createStyledButton("Log Out", 715, buttonStatus);
+
+        buttonStatus = user instanceof Admin || user instanceof SuperAdmin;
+        addUserButton = createStyledButton("Add User", 75, buttonStatus);
+        updateUserButton = createStyledButton("Update User", 155, buttonStatus);
+        deleteUserButton = createStyledButton("Delete User", 235, buttonStatus);
+        listUsersButton = createStyledButton("List Users", 315, buttonStatus);
+        
 
         leftPanel.add(dashButton);
         leftPanel.add(addUserButton);
@@ -97,7 +109,7 @@ public class AdminDashboard implements ActionListener {
         leftPanel.add(logoutButton);
     }
 
-    private JButton createStyledButton(String text, int yPosition) {
+    private JButton createStyledButton(String text, int yPosition, boolean isEnabled) {
         JButton button = new JButton(text);
         button.setBounds(20, yPosition, 200, 50);
         button.setBackground(new Color(255, 140, 0));
@@ -106,6 +118,7 @@ public class AdminDashboard implements ActionListener {
         button.setFont(new Font("Verdana", Font.BOLD, 16));
         button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2, true));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setEnabled(isEnabled);
         button.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) {
                 button.setBackground(new Color(255, 165, 0));
