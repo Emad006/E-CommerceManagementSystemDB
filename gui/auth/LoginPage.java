@@ -4,6 +4,8 @@ import controllers.UserManager;
 import core.entities.SuperAdmin;
 import core.entities.Admin;
 import core.entities.User;
+import core.entities.Worker;
+import core.entities.Customer;
 import gui.dashboards.AdminDashboard;
 import gui.dashboards.CustomerDashboard;
 
@@ -200,12 +202,12 @@ public class LoginPage implements ActionListener {
                 // Close this frame and open admin/customer dashboard
                 // Pass the user object (duplicate) to the constructor of the dashboard
                 User u = userManager.searchUser(email);
-                if (u instanceof Admin || u instanceof SuperAdmin) {
+                if (u instanceof Admin || u instanceof SuperAdmin || u instanceof Worker) {
                     frame.dispose();
                     new AdminDashboard(email);
-                } else {
-                    new CustomerDashboard(email);
+                } else if (u instanceof Customer) {
                     frame.dispose();
+                    new CustomerDashboard(email);
                 }
             } else {
                 JOptionPane.showMessageDialog(frame, "Incorrect username or password.", "Error",
