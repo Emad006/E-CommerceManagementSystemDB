@@ -15,7 +15,7 @@ public class Customer extends User implements ICustomer {
         setGender(gender);
         setContactNo(contactNo);
         setAddress(address);
-        userCart = new Cart();
+        userCart = new Cart(this.getEmail());
     }
 
     // TODO: Ensure validation on front-end to avoid multiple genders.
