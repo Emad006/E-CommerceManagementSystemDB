@@ -53,7 +53,7 @@ public class AdminDashboard implements ActionListener {
         if (user instanceof Admin || user instanceof SuperAdmin) {
             welcomeLabel = new JLabel("Welcome to the Admin Dashboard");
         } else {
-            welcomeLabel = new JLabel("Welcome to the Employee Dashboard");
+            welcomeLabel = new JLabel("Welcome to the Employee Dashboard\n");
         }
 
         welcomeLabel.setForeground(new Color(219, 226, 233));
@@ -81,18 +81,16 @@ public class AdminDashboard implements ActionListener {
     }
 
     private void initializeButtons() {
-        boolean buttonStatus = true;
+        dashButton = createStyledButton("Dashboard", 5, true);
+        addProductButton = createStyledButton("Add Product", 395, true);
+        updateProductButton = createStyledButton("Update Product", 475, true);
+        deleteProductButton = createStyledButton("Delete Product", 555, true);
+        listProductsButton = createStyledButton("List Products", 635, true);
+        logoutButton = createStyledButton("Log Out", 715, true);
 
-        dashButton = createStyledButton("Dashboard", 5, buttonStatus);
-        addProductButton = createStyledButton("Add Product", 395, buttonStatus);
-        updateProductButton = createStyledButton("Update Product", 475, buttonStatus);
-        deleteProductButton = createStyledButton("Delete Product", 555, buttonStatus);
-        listProductsButton = createStyledButton("List Products", 635, buttonStatus);
-        logoutButton = createStyledButton("Log Out", 715, buttonStatus);
-
-        buttonStatus = user instanceof Admin || user instanceof SuperAdmin;
+        boolean buttonStatus = user instanceof Admin || user instanceof SuperAdmin;
         addUserButton = createStyledButton("Add User", 75, buttonStatus);
-        updateUserButton = createStyledButton("Update User", 155, buttonStatus);
+        updateUserButton = createStyledButton("Update User", 155, true);
         deleteUserButton = createStyledButton("Delete User", 235, buttonStatus);
         listUsersButton = createStyledButton("List Users", 315, buttonStatus);
         
