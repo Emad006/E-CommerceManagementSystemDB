@@ -11,10 +11,10 @@ import java.awt.*;
 import java.awt.event.*;
 
 import gui.auth.LoginPage;
-import gui.components.admin.ManageUsersPanel;
-import gui.components.admin.ManageProductsPanel;
+import gui.components.employee.ManageProductsPanel;
+import gui.components.employee.ManageUsersPanel;
 
-public class AdminDashboard implements ActionListener {
+public class EmployeeDashboard implements ActionListener {
     private User user;
     private JFrame frame;
     private JPanel leftPanel, mainPanel;
@@ -25,7 +25,7 @@ public class AdminDashboard implements ActionListener {
     private ManageUsersPanel userPanel;
     private ManageProductsPanel productPanel;
 
-    public AdminDashboard(String email) {
+    public EmployeeDashboard(String email) {
         UserManager userManager = new UserManager();
         user = userManager.searchUser(email);
 

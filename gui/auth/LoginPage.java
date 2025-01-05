@@ -6,7 +6,7 @@ import core.entities.Admin;
 import core.entities.User;
 import core.entities.Worker;
 import core.entities.Customer;
-import gui.dashboards.AdminDashboard;
+import gui.dashboards.EmployeeDashboard;
 import gui.dashboards.CustomerDashboard;
 
 import javax.swing.*;
@@ -204,7 +204,7 @@ public class LoginPage implements ActionListener {
                 User u = userManager.searchUser(email);
                 if (u instanceof Admin || u instanceof SuperAdmin || u instanceof Worker) {
                     frame.dispose();
-                    new AdminDashboard(email);
+                    new EmployeeDashboard(email);
                 } else if (u instanceof Customer) {
                     frame.dispose();
                     new CustomerDashboard(email);

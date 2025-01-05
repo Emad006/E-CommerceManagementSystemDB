@@ -1,4 +1,4 @@
-package gui.components.admin;
+package gui.components.employee;
 
 import javax.swing.*;
 import java.awt.*;
