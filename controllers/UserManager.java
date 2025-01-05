@@ -167,21 +167,32 @@ public class UserManager implements IUserManager {
         return null;
     }
 
-    // Update user (Customer)
+    // Update user (Customer || Worker)
     public boolean updateUser(String name, String email, String password, String role, String gender, String contactNo,
             String address) {
         for (User u : userList) {
             if (u.getEmail().equals(email)) {
-                Customer c = (Customer) u;
-                c.setName(name);
-                // c.setEmail(email);
-                c.setPassword(password);
-                c.setRole(role);
-                c.setGender(gender);
-                c.setContactNo(contactNo);
-                c.setAddress(address);
-                dumpDataToFile();
-                return true;
+                if (u instanceof Customer) {
+                    Customer c = (Customer) u;
+                    c.setName(name);
+                    c.setPassword(password);
+                    c.setRole(role);
+                    c.setGender(gender);
+                    c.setContactNo(contactNo);
+                    c.setAddress(address);
+                    dumpDataToFile();
+                    return true;
+                } else if (u instanceof Worker) {
+                    Worker w = (Worker) u;
+                    w.setName(name);
+                    w.setPassword(password);
+                    w.setRole(role);
+                    w.setGender(gender);
+                    w.setContactNo(contactNo);
+                    w.setAddress(address);
+                    dumpDataToFile();
+                    return true;
+                }
             }
         }
         return false;
