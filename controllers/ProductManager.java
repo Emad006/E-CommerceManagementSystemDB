@@ -44,7 +44,7 @@ public class ProductManager implements IProductManager {
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }    
+        }
     }
 
     // TODO: Validate ID in front-end
