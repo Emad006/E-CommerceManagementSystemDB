@@ -2,15 +2,28 @@ package gui.components.customer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import core.entities.Customer;
+import core.entities.Card;
+import controllers.CardManager;
 
 public class PaymentFrame extends JFrame {
-
     private JTextField newAddressField;
+    private JTextField cardNumberField;
+    private JTextField expiryDateField;
+    private JTextField securityCodeField;
+    private JTextField nameOnCardField;
+    private JComboBox<String> savedCardsComboBox;
+    private JCheckBox sameAsDelivery;
+    private CardManager cardManager;
+    private Customer customer;
 
     public PaymentFrame(Customer customer, CartFrame cartFrame) {
+        this.customer = customer;
+        cardManager = new CardManager();
 
         // Set the frame properties
         setTitle("Payment");
@@ -29,71 +42,75 @@ public class PaymentFrame extends JFrame {
         paymentDetailsLabel.setForeground(Color.decode("#ff6600"));
         paymentDetailsLabel.setBounds(50, 80, 200, 30);
 
+        // Saved Cards ComboBox
+        JLabel savedCardsLabel = new JLabel("Saved Cards:");
+        savedCardsLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
+        savedCardsLabel.setBounds(50, 130, 200, 30);
+        add(savedCardsLabel);
+
+        savedCardsComboBox = new JComboBox<>();
+        savedCardsComboBox.setFont(new Font("Verdana", Font.PLAIN, 17));
+        savedCardsComboBox.setBounds(250, 130, 545, 30);
+        add(savedCardsComboBox);
+
+        // Load saved cards
+        loadSavedCards();
+
+        savedCardsComboBox.addActionListener(e -> {
+            if (savedCardsComboBox.getSelectedItem().equals("Enter New Payment Method")) {
+                enableCardFields(true);
+                clearCardFields();
+                sameAsDelivery.setEnabled(true);
+                newAddressField.setEditable(true);
+            } else {
+                enableCardFields(false);
+                populateCardFields(savedCardsComboBox.getSelectedItem().toString());
+                sameAsDelivery.setEnabled(false);
+                newAddressField.setEditable(false);
+            }
+        });
+
         // Card number input with placeholder and card icon
         JLabel cardNumberLabel = new JLabel("Card Number:");
-        cardNumberLabel.setBounds(50, 130, 150, 30);
+        cardNumberLabel.setBounds(50, 180, 150, 30);
         cardNumberLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
 
-        // JLabel payIcon = new JLabel(new ImageIcon("/Users/xyrophyte/Data/Code/Java/E-CommerceManagementSystem/assets/images/paymentAssets/creditCard.png"));
-        JLabel payIcon = new JLabel(loadIcon("../assets/images/paymentAssets/creditCard.png"));
-        payIcon.setBounds(490, 18, 80, 40);
-
-        JTextField cardNumberField = new JTextField(20);
+        cardNumberField = new JTextField(20);
         cardNumberField.setToolTipText("Enter your 16-digit card number without spaces or dashes");
         cardNumberField.setFont(new Font("Verdana", Font.PLAIN, 17));
-        cardNumberField.setBounds(210, 130, 545, 30); // Adjusted width and height
-
-        // JLabel cardIcon = new JLabel(new ImageIcon("/Users/xyrophyte/Data/Code/Java/E-CommerceManagementSystem/assets/images/paymentAssets/VISA.png"));
-        JLabel cardIcon = new JLabel(loadIcon("../assets/images/paymentAssets/VISA.png"));
-        cardIcon.setBounds(200, 170, 90, 40);
-
-        // JLabel cardIcon2 = new JLabel(new ImageIcon("/Users/xyrophyte/Data/Code/Java/E-CommerceManagementSystem/assets/images/paymentAssets/MasterCard.png"));
-        JLabel cardIcon2 = new JLabel(loadIcon("../assets/images/paymentAssets/MasterCard.png"));
-        cardIcon2.setBounds(270, 170, 90, 40);
-
-        // JLabel cardIcon3 = new JLabel(new ImageIcon("/Users/xyrophyte/Data/Code/Java/E-CommerceManagementSystem/assets/images/paymentAssets/AMEX.png"));
-        JLabel cardIcon3 = new JLabel(loadIcon("../assets/images/paymentAssets/AMEX.png"));
-        cardIcon3.setBounds(340, 170, 100, 40);
-
-        // JLabel cardIcon4 = new JLabel(new ImageIcon("/Users/xyrophyte/Data/Code/Java/E-CommerceManagementSystem/assets/images/paymentAssets/PayPal.png"));
-        JLabel cardIcon4 = new JLabel(loadIcon("../assets/images/paymentAssets/PayPal.png"));
-        cardIcon4.setBounds(420, 170, 90, 40);
+        cardNumberField.setBounds(210, 180, 545, 30); // Adjusted width and height
 
         // Expiry date and security code side-by-side
         JLabel expiryDateLabel = new JLabel("Expiry Date:");
-        expiryDateLabel.setBounds(50, 220, 130, 30);
+        expiryDateLabel.setBounds(50, 230, 130, 30);
         expiryDateLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
-        JTextField expiryDateField = new JTextField(5);
+        expiryDateField = new JTextField(5);
         expiryDateField.setToolTipText("Enter the expiry date in MM/YY format");
         expiryDateField.setFont(new Font("Verdana", Font.PLAIN, 17));
-        expiryDateField.setBounds(210, 220, 160, 40); // Set position and size
-
-        // JLabel securityIcon = new JLabel(new ImageIcon("/Users/xyrophyte/Data/Code/Java/E-CommerceManagementSystem/assets/images/paymentAssets/CCV.png"));
-        JLabel securityIcon = new JLabel(loadIcon("../assets/images/paymentAssets/CCV.png"));
-        securityIcon.setBounds(690, 225, 80, 30);
+        expiryDateField.setBounds(210, 230, 160, 30); // Set position and size
 
         JLabel securityCodeLabel = new JLabel("Security Code:");
-        securityCodeLabel.setBounds(440, 220, 140, 30);
+        securityCodeLabel.setBounds(440, 230, 140, 30);
         securityCodeLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
-        JTextField securityCodeField = new JTextField(3);
+        securityCodeField = new JTextField(3);
         securityCodeField.setToolTipText("3-digit code on the back of your card");
         securityCodeField.setFont(new Font("Verdana", Font.PLAIN, 17));
-        securityCodeField.setBounds(600, 220, 155, 40); // Set position and size
+        securityCodeField.setBounds(600, 230, 155, 30); // Set position and size
 
         // Name on card - Adjust size
         JLabel nameOnCardLabel = new JLabel("Name on Card:");
-        nameOnCardLabel.setBounds(50, 270, 140, 30);
+        nameOnCardLabel.setBounds(50, 280, 140, 30);
         nameOnCardLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
-        JTextField nameOnCardField = new JTextField();
+        nameOnCardField = new JTextField();
         nameOnCardField.setToolTipText("Enter the exact name appears on card");
         nameOnCardField.setFont(new Font("Verdana", Font.PLAIN, 17));
-        nameOnCardField.setBounds(210, 270, 545, 40); // Set position and size
+        nameOnCardField.setBounds(210, 280, 545, 30); // Set position and size
 
         // Billing address and checkbox
         JLabel billingAddressLabel = new JLabel("Billing Address:");
         billingAddressLabel.setBounds(50, 330, 200, 30);
         billingAddressLabel.setFont(new Font("Verdana", Font.BOLD, 20));
-        JCheckBox sameAsDelivery = new JCheckBox("Same as my delivery address");
+        sameAsDelivery = new JCheckBox("Same as my delivery address");
         sameAsDelivery.setBounds(50, 370, 350, 30);
         sameAsDelivery.setFont(new Font("Verdana", Font.PLAIN, 18));
         sameAsDelivery.setFocusPainted(false);
@@ -114,7 +131,10 @@ public class PaymentFrame extends JFrame {
         billingInfoLabel.setFont(new Font("Verdana", Font.BOLD, 21));
         newAddressField = new JTextField("");
         newAddressField.setFont(new Font("Verdana", Font.PLAIN, 17));
-        newAddressField.setBounds(50, 490, 702, 40); // Set position and size
+        newAddressField.setBounds(50, 490, 702, 30); // Set position and size
+        newAddressField.setBorder(BorderFactory.createCompoundBorder(
+                newAddressField.getBorder(),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5))); // Adjust padding
 
         JLabel totalLabel = new JLabel("Total Cost:");
         totalLabel.setFont(new Font("Verdana", Font.BOLD, 21));
@@ -182,14 +202,10 @@ public class PaymentFrame extends JFrame {
         // Add components to the frame
         add(header);
         add(paymentDetailsLabel);
+        add(savedCardsLabel);
+        add(savedCardsComboBox);
         add(cardNumberLabel);
         add(cardNumberField);
-        add(payIcon);
-        add(cardIcon);
-        add(cardIcon2);
-        add(cardIcon3);
-        add(cardIcon4);
-        add(securityIcon);
         add(expiryDateLabel);
         add(expiryDateField);
         add(securityCodeLabel);
@@ -205,16 +221,44 @@ public class PaymentFrame extends JFrame {
         add(payNowButton);
         add(clearButton);
 
+        // Make frame visible
         setVisible(true);
     }
 
-    // Get the absolute path from relative path
-    private ImageIcon loadIcon(String path) {
-        File icon = new File(path);
-        if (icon.exists()) {
-            return new ImageIcon(icon.getAbsolutePath());
-        } else {
-            throw new RuntimeException("Icon not found: " + path);
+    private void loadSavedCards() {
+        ArrayList<Card> savedCards = cardManager.getCardsByCustomerEmail(customer.getEmail());
+        savedCardsComboBox.addItem("Enter New Payment Method");
+        for (Card card : savedCards) {
+            savedCardsComboBox.addItem(card.getCardNumber() + " - " + card.getExpiryDate());
+        }
+    }
+
+    private void enableCardFields(boolean enable) {
+        cardNumberField.setEnabled(enable);
+        expiryDateField.setEnabled(enable);
+        securityCodeField.setEnabled(enable);
+        nameOnCardField.setEnabled(enable);
+    }
+
+    private void clearCardFields() {
+        cardNumberField.setText("");
+        expiryDateField.setText("");
+        securityCodeField.setText("");
+        nameOnCardField.setText("");
+        newAddressField.setText("");
+    }
+
+    private void populateCardFields(String cardDetails) {
+        ArrayList<Card> savedCards = cardManager.getCardsByCustomerEmail(customer.getEmail());
+        for (Card card : savedCards) {
+            if ((card.getCardNumber() + " - " + card.getExpiryDate()).equals(cardDetails)) {
+                cardNumberField.setText(card.getCardNumber());
+                expiryDateField.setText(card.getExpiryDate());
+                securityCodeField.setText(String.valueOf(card.getSecurityCode()));
+                nameOnCardField.setText(card.getNameOnCard());
+                newAddressField.setText(card.getBillingAddress());
+                break;
+            }
         }
     }
 }
