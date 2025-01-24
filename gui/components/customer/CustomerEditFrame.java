@@ -1,26 +1,9 @@
 package gui.components.customer;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.SwingConstants;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Cursor;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import core.entities.Customer;
 import controllers.UserManager;
@@ -33,9 +16,20 @@ public class CustomerEditFrame extends JFrame {
 
         // Set frame title
         setTitle("Edit Customer Account Information");
-        setSize(450, 530);
+        setSize(450, 560);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null); // Center the frame
+        setLayout(new BorderLayout());
+
+        // Create toggle button
+        JButton toggleButton = createStyledButton("Edit Payment Info", new Color(80, 80, 80), Color.WHITE, new Font("Arial", Font.BOLD, 14), new Color(100, 100, 100));
+        toggleButton.setPreferredSize(new Dimension(450, 40)); // Minimal height
+        toggleButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new CardEditFrame(customer);
+                dispose();
+            }
+        });
 
         // Create main panel for the form
         JPanel panel = new JPanel();
@@ -73,7 +67,7 @@ public class CustomerEditFrame extends JFrame {
         repeatPasswordField.setText(customer.getPassword());
 
         JLabel genderLabel = createCenteredLabel("Gender", labelFont, labelTextColor);
-        JComboBox<String> genderComboBox = new JComboBox<>(new String[] { "Male", "Female", "Other" });
+        JComboBox<String> genderComboBox = new JComboBox<>(new String[]{"Male", "Female", "Other"});
         genderComboBox.setFont(fieldFont);
         genderComboBox.setBackground(fieldBgColor);
         genderComboBox.setForeground(fieldFgColor);
@@ -112,8 +106,7 @@ public class CustomerEditFrame extends JFrame {
             }
         });
 
-        JButton cancelButton = createStyledButton("Cancel", buttonBgColor, buttonTextColor, fieldFont,
-                buttonHoverBgColor);
+        JButton cancelButton = createStyledButton("Cancel", buttonBgColor, buttonTextColor, fieldFont, buttonHoverBgColor);
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
@@ -151,8 +144,9 @@ public class CustomerEditFrame extends JFrame {
         // Add button panel to main panel
         panel.add(buttonPanel);
 
-        // Add panel to frame
-        add(panel);
+        // Add components to frame
+        add(toggleButton, BorderLayout.NORTH);
+        add(panel, BorderLayout.CENTER);
 
         // Make frame visible
         setVisible(true);
@@ -207,8 +201,8 @@ public class CustomerEditFrame extends JFrame {
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         // Change background on hover
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent evt) {
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(hoverColor);
             }
 
@@ -221,7 +215,7 @@ public class CustomerEditFrame extends JFrame {
     }
 
     private void editUser(String name, String password, String repeatPassword, String gender, String contactNo,
-            String address) {
+                          String address) {
         // Empty field validation
         if (name.isEmpty() || password.isEmpty() || repeatPassword.isEmpty() || contactNo.isEmpty()
                 || address.isEmpty()) {
