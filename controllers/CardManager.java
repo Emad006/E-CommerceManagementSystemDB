@@ -30,7 +30,7 @@ public class CardManager implements ICardManager {
         Iterator<Card> iterator = cardsOnFile.iterator();
         while (iterator.hasNext()) {
             Card c = iterator.next();
-            if (c.getCustomerEmail() == customerEmail && c.getCardNumber() == cardNumber) {
+            if (c.getCustomerEmail().equals(customerEmail) && c.getCardNumber().equals(cardNumber)) {
                 iterator.remove();
                 dumpDataToFile();
                 return;
@@ -41,11 +41,35 @@ public class CardManager implements ICardManager {
     public ArrayList<Card> getCardsByCustomerEmail(String email) {
         ArrayList<Card> customerCards = new ArrayList<Card>();
         for (Card c : cardsOnFile) {
-            if (c.getCustomerEmail() == email) {
+            if (c.getCustomerEmail().equals(email)) {
                 customerCards.add(c);
             }
         }
         return customerCards;
+    }
+
+    public boolean cardExistsOnUserAccount(String customerEmail, String cardNumber) {
+        for (Card c : cardsOnFile) {
+            if (c.getCustomerEmail().equals(customerEmail) && c.getCardNumber().equals(cardNumber)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String[][] getDataForTable(String email) {
+        ArrayList<Card> customerCards = getCardsByCustomerEmail(email);
+        String[][] data = new String[customerCards.size()][6];
+        for (int i = 0; i < customerCards.size(); i++) {
+            Card c = customerCards.get(i);
+            data[i][0] = c.getCardNumber();
+            data[i][1] = c.getExpiryDate();
+            data[i][2] = Integer.toString(c.getSecurityCode());
+            data[i][3] = c.getNameOnCard();
+            data[i][4] = c.getBillingAddress();
+            data[i][5] = c.getCustomerEmail();
+        }
+        return data;
     }
 
     private void loadCardsToMemory() {
