@@ -1,6 +1,6 @@
 Super Admin^~^super@admin.com^~^superadmin123^~^SuperAdmin
 Emad^~^emadharun.eh@gmail.com^~^87654321^~^Admin
 Bob^~^bob@gmail.com^~^alice&bob^~^Customer^~^Male^~^+880123987456^~^Helsinki, Finland
-Alice^~^alice@gmail.com^~^bob&alice^~^Customer^~^Female^~^01784561239^~^Florida, USA
+Alice Franks^~^alice@gmail.com^~^bob&alice^~^Customer^~^Female^~^01784561239^~^Florida, USA
 Shakib^~^shakib443@gmail.com^~^shakib443^~^Worker^~^Male^~^0123456789^~^443/R Blvd. #3
 Istiak^~^istiak339@aiub.edu^~^istiak339^~^Customer^~^Male^~^0198478338^~^Allentown, NJ 08501
