@@ -1,0 +1,76 @@
+package core.entities;
+
+public class Card {
+    private String customerEmail;
+    private String cardNumber;
+    private String expiryDate;
+    private int securityCode;
+    private String nameOnCard;
+    private String billingAddress;
+
+    public Card(String customerEmail, String cardNumber, String expiryDate, int securityCode, String nameOnCard, String billingAddress) {
+        this.customerEmail = customerEmail;
+        setCardNumber(cardNumber);
+        setExpiryDate(expiryDate);
+        setSecurityCode(securityCode);
+        setNameOnCard(nameOnCard);
+        setBillingAddress(billingAddress);
+    }
+
+    public String getCustomerEmail() {
+        return customerEmail;
+    }
+
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public int getSecurityCode() {
+        return securityCode;
+    }
+
+    public String getNameOnCard() {
+        return nameOnCard;
+    }
+
+    public String getBillingAddress() {
+        return billingAddress;
+    }
+
+    private void setCardNumber(String cardNumber) {
+        if (cardNumber.length() == 16) {
+            this.cardNumber = cardNumber;
+        } else {
+            throw new IllegalArgumentException("Invalid Card Number.");
+        }
+    }
+
+    private void setExpiryDate(String expiryDate) {
+        if (expiryDate.length() == 5) {
+            this.expiryDate = expiryDate;
+        } else {
+            throw new IllegalArgumentException("Invalid Expiry Date.");
+        }
+    }
+
+    private void setSecurityCode(int securityCode) {
+        String strSecurityCode = Integer.toString(securityCode);
+        if (strSecurityCode.length() == 3) {
+            this.securityCode = securityCode;
+        } else {
+            throw new IllegalArgumentException("Invalid Security Code.");
+        }
+    }
+
+    private void setNameOnCard(String nameOnCard) {
+        this.nameOnCard = nameOnCard;
+    }
+
+    private void setBillingAddress(String billingAddress) {
+        this.billingAddress = billingAddress;
+    }
+}
