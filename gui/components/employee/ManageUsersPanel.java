@@ -929,6 +929,8 @@ public class ManageUsersPanel {
         // Create table with data
         JTable userTable = new JTable(data, columnNames);
         userTable.setFillsViewportHeight(true);
+        userTable.setForeground(Color.WHITE); // Set text color for the table
+        userTable.setBackground(new Color(40, 40, 40)); // Set background color for the table
 
         // Make table scrollable
         JScrollPane scrollPane = new JScrollPane(userTable);

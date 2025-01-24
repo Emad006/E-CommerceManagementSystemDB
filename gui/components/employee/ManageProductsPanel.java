@@ -676,7 +676,8 @@ public class ManageProductsPanel {
         // Create table with data
         JTable productTable = new JTable(data, columnNames);
         productTable.setFillsViewportHeight(true);
-        productTable.setBackground(new Color(240, 240, 240)); // Set background color for the table
+        productTable.setForeground(Color.WHITE); // Set text color for the table
+        productTable.setBackground(new Color(40, 40, 40)); // Set background color for the table
 
         // Make table scrollable
         JScrollPane scrollPane = new JScrollPane(productTable);
