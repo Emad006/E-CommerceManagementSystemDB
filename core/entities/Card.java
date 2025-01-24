@@ -1,6 +1,8 @@
 package core.entities;
 
-public class Card {
+import interfaces.entities.ICard;
+
+public class Card implements ICard {
     private String customerEmail;
     private String cardNumber;
     private String expiryDate;

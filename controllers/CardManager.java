@@ -10,8 +10,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import core.entities.Card;
+import interfaces.controllers.ICardManager;
 
-public class CardManager {
+public class CardManager implements ICardManager {
     private ArrayList <Card> cardsOnFile;
 
     public CardManager() {
