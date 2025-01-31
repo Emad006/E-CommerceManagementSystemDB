@@ -2,8 +2,6 @@ package gui.components.customer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import core.entities.Customer;
