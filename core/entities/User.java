@@ -5,16 +5,26 @@ import java.util.regex.Pattern;
 import interfaces.entities.IUser;
 
 public abstract class User implements IUser {
+    private int id;
     private String name;
     private String email;
     private String password;
     private String role;
 
-    public User(String name, String email, String password, String role) {
+    public User(int id, String name, String email, String password, String role) {
+        setID(id);
         setName(name);
         setEmail(email);
         setPassword(password);
         setRole(role);
+    }
+
+    private void setID(int id) {
+        if (id > 0) {
+            this.id = id;
+        } else {
+            throw new IllegalArgumentException("Invalid ID.");
+        }
     }
 
     public void setName(String name) {
@@ -47,6 +57,10 @@ public abstract class User implements IUser {
         } else {
             throw new IllegalArgumentException("Invalid Role.");
         }
+    }
+
+    public int getID() {
+        return id;
     }
 
     public String getName() {

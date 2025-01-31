@@ -8,9 +8,9 @@ public class Worker extends User implements IWorker{
     private String contactNo;
     private String address;
 
-    public Worker(String name, String email, String password, String role, String gender, String contactNo,
+    public Worker(int id, String name, String email, String password, String role, String gender, String contactNo,
             String address) {
-        super(name, email, password, role);
+        super(id, name, email, password, role);
         setGender(gender);
         setContactNo(contactNo);
         setAddress(address);

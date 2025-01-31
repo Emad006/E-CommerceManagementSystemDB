@@ -9,9 +9,9 @@ public class Customer extends User implements ICustomer {
     private String address;
     private Cart userCart;
 
-    public Customer(String name, String email, String password, String role, String gender, String contactNo,
+    public Customer(int id, String name, String email, String password, String role, String gender, String contactNo,
             String address) {
-        super(name, email, password, role);
+        super(id, name, email, password, role);
         setGender(gender);
         setContactNo(contactNo);
         setAddress(address);
