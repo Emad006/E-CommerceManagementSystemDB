@@ -91,8 +91,8 @@ public class CardEditFrame extends JFrame {
                 }
 
                 // Check if security code is valid
-                if (securityCodeField.getText().length() != 3) {
-                    JOptionPane.showMessageDialog(null, "Security code must be 3 digits", "Error", JOptionPane.ERROR_MESSAGE);
+                if (Integer.parseInt(securityCodeField.getText()) < 100 && Integer.parseInt(securityCodeField.getText()) > 999) {
+                    JOptionPane.showMessageDialog(null, "Security code must be between 100 and 999", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
