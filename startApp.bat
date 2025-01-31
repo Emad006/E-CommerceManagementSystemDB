@@ -1,10 +1,21 @@
 @echo off
+setlocal
 
-REM Compile the Java files
-javac -d bin Main.java
+:: Absolute path of MySQL Connector JAR
+set CLASSPATH=lib\mysql-connector-j-9.2.0.jar
 
-REM Navigate to the bin directory
+:: Create the bin directory if it doesn't exist
+if not exist bin mkdir bin
+
+:: Compile all Java files, including the gui.auth package
+for /r %%f in (*.java) do (
+    javac -d bin -cp "%CLASSPATH%" "%%f"
+)
+
+:: Change to bin directory
 cd bin
 
-REM Run the Main class with the bin directory in the classpath
-java Main
+:: Run Main class with MySQL Connector in classpath
+java -cp ".;%CLASSPATH%" Main
+
+endlocal
