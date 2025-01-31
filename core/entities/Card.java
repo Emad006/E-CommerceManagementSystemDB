@@ -59,9 +59,9 @@ public class Card implements ICard {
         }
     }
 
+    // TODO: CCV must be between 100 and 999
     private void setSecurityCode(int securityCode) {
-        String strSecurityCode = Integer.toString(securityCode);
-        if (strSecurityCode.length() == 3) {
+        if (securityCode >= 100 && securityCode <= 999) {
             this.securityCode = securityCode;
         } else {
             throw new IllegalArgumentException("Invalid Security Code.");
