@@ -74,7 +74,7 @@ public class CardManager implements ICardManager {
 
     private void loadCardsToMemory() {
         // Try to create file if it doesn't exist
-        File file = new File("../database/cardData.txt");
+        File file = new File("../txtdb/cardData.txt");
         if(!file.exists()) {
             try {
                 file.createNewFile();
@@ -85,7 +85,7 @@ public class CardManager implements ICardManager {
 
         // Read from file
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("../database/cardData.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("../txtdb/cardData.txt"));
             String l;
             while ((l = reader.readLine()) != null) {
                 String[] parts = l.split("\\^~\\^");
@@ -101,7 +101,7 @@ public class CardManager implements ICardManager {
     // Copying entire array list to text file
     private void dumpDataToFile() {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("../database/cardData.txt"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("../txtdb/cardData.txt"));
             for (Card c : cardsOnFile) {
                 String t = c.getCustomerEmail() + "^~^" + c.getCardNumber() + "^~^" + c.getExpiryDate() + "^~^" + c.getSecurityCode() + "^~^" + c.getNameOnCard() + "^~^" + c.getBillingAddress();
                 writer.write(t);

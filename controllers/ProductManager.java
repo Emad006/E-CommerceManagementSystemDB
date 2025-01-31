@@ -23,7 +23,7 @@ public class ProductManager implements IProductManager {
 
     private void loadProductToMemory() {
         // Try to create file if it doesn't exist
-        File file = new File("../database/productData.txt");
+        File file = new File("../txtdb/productData.txt");
         if(!file.exists()) {
             try {
                 file.createNewFile();
@@ -34,7 +34,7 @@ public class ProductManager implements IProductManager {
 
         // Read from file
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("../database/productData.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("../txtdb/productData.txt"));
             String l;
             while ((l = reader.readLine()) != null) {
                 String[] parts = l.split("\\^~\\^");
@@ -180,7 +180,7 @@ public class ProductManager implements IProductManager {
     // Copying entire array list to text file
     private void dumpDataToFile() {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("../database/productData.txt"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("../txtdb/productData.txt"));
             for (Product p : productList) {
                 String t = p.getID() + "^~^" + p.getName() + "^~^" + p.getPrice() + "^~^" + p.getStock() + "^~^" + p.getCategory() + "^~^" + p.getDescription() + "^~^" + p.getImagePath();
                 writer.write(t);

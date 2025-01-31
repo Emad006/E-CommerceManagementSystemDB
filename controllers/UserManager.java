@@ -27,7 +27,7 @@ public class UserManager implements IUserManager {
     private void loadUserToMemory() {
 
         // Try to create a file if it doesn't exist
-        File file = new File("../database/userData.txt");
+        File file = new File("../txtdb/userData.txt");
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -38,7 +38,7 @@ public class UserManager implements IUserManager {
 
         // Read from file
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("../database/userData.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("../txtdb/userData.txt"));
             String l;
             while ((l = reader.readLine()) != null) {
                 String[] parts = l.split("\\^~\\^"); // Use StringBuffer / StringBuilder
@@ -256,7 +256,7 @@ public class UserManager implements IUserManager {
         try {
             // Do not pass "true" to FileWriter as I want to overwrite the entire file.
             // Passing "true" would just append to the file.
-            BufferedWriter writer = new BufferedWriter(new FileWriter("../database/userData.txt"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("../txtdb/userData.txt"));
             for (User u : userList) {
                 if (u instanceof Admin || u instanceof SuperAdmin) {
                     // Type cast back to original object to run object specific methods
