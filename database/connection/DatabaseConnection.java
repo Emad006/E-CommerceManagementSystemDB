@@ -26,7 +26,13 @@ public class DatabaseConnection {
     public static void closeQuietly(AutoCloseable resource) {
         if (resource != null) {
             try {
-                resource.close();
+                if (resource instanceof Connection) {  // Check if resource is a Connection
+                    Connection conn = (Connection) resource;
+                    if (!conn.getAutoCommit()) {  // Only reset if AutoCommit is false
+                        conn.setAutoCommit(true);
+                    }
+                }
+                resource.close();  // Close the resource
             } catch (Exception e) {
                 e.printStackTrace();
             }
