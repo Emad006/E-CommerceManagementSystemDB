@@ -174,4 +174,217 @@ public class UserDAO {
             DatabaseConnection.closeQuietly(conn);
         }
     }
+
+    // Delete user by ID
+    // TODO: Validate ID in front-end || Just check if the userExists
+    public void deleteUser(int id) {
+        String deleteUserQuery = "DELETE FROM USERS WHERE USER_ID = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pr = conn.prepareStatement(deleteUserQuery)) {
+                pr.setInt(1, id);
+                pr.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Delete user by email
+    public void deleteUser(String email) {
+        deleteUser(getUserID(email));
+    }
+
+    // Search user by ID (return user object)
+    // TODO: Catch NullPointerException in front-end and notify user that the user does not exist.
+    public User searchUser(int id) {
+        String searchUserQuery = "SELECT * FROM USERS WHERE USER_ID = ?";
+        String searchUserDetailQuery = "SELECT * FROM USER_DETAIL WHERE USER_ID = ?";
+    
+        Connection conn = null;
+        PreparedStatement userStmt = null;
+        PreparedStatement userDetailStmt = null;
+        ResultSet userRs = null;
+        ResultSet userDetailRs = null;
+    
+        try {
+            conn = DatabaseConnection.getConnection();
+    
+            // Search in USERS table
+            userStmt = conn.prepareStatement(searchUserQuery);
+            userStmt.setInt(1, id);
+            userRs = userStmt.executeQuery();
+    
+            if (userRs.next()) { // User found
+                int userId = userRs.getInt("USER_ID");
+                String name = userRs.getString("NAME");
+                String email = userRs.getString("EMAIL");
+                String password = userRs.getString("PWD");
+                String role = userRs.getString("ROLE");
+    
+                // If user is SuperAdmin or Admin, return early
+                if (role.equalsIgnoreCase("SuperAdmin")) {
+                    return new SuperAdmin(userId, name, email, password, role);
+                } else if (role.equalsIgnoreCase("Admin")) {
+                    return new Admin(userId, name, email, password, role);
+                }
+    
+                // If user is "Worker" or "Customer", get additional details
+                userDetailStmt = conn.prepareStatement(searchUserDetailQuery);
+                userDetailStmt.setInt(1, id);
+                userDetailRs = userDetailStmt.executeQuery();
+    
+                if (userDetailRs.next()) {
+                    String gender = userDetailRs.getString("GENDER");
+                    String contactNo = userDetailRs.getString("CONTACT_NO");
+                    String address = userDetailRs.getString("ADDR");
+    
+                    if (role.equalsIgnoreCase("Customer")) {
+                        return new Customer(userId, name, email, password, role, gender, contactNo, address);
+                    } else if (role.equalsIgnoreCase("Worker")) {
+                        return new Worker(userId, name, email, password, role, gender, contactNo, address);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DatabaseConnection.closeQuietly(userDetailRs);
+            DatabaseConnection.closeQuietly(userRs);
+            DatabaseConnection.closeQuietly(userDetailStmt);
+            DatabaseConnection.closeQuietly(userStmt);
+            DatabaseConnection.closeQuietly(conn);
+        }
+    
+        return null; // Return null if user not found
+    }
+
+    // Search user by email (return user object)
+    public User searchUser(String email) {
+        return searchUser(getUserID(email));
+    }
+    
+    // TODO: Catch NullPointerException in front-end and notify user that the user does not exist.
+    // Get user role by ID
+    public String getUserRole(int id) {
+        User u = searchUser(id);
+
+        if (u != null) {
+            return u.getRole();
+        } else {
+            return null;
+        }
+    }
+
+    // Get user role by email
+    public String getUserRole(String email) {
+        return getUserRole(getUserID(email));
+    }
+
+    // Update user (Customer || Worker)
+    public boolean updateUser(int id, String name, String email, String password, String role, String gender, String contactNo, String address) {
+        String updateUserQuery = "UPDATE USERS SET NAME = ?, PASSWORD = ?, ROLE = ? WHERE USER_ID = ?";
+        String updateUserDetailQuery = "UPDATE USER_DETAIL SET GENDER = ?, CONTACT_NO = ?, ADDR = ? WHERE USER_ID = ?";
+
+        Connection conn = null;
+        PreparedStatement userStmt = null;
+        PreparedStatement userDetailStmt = null;
+
+        try {
+            conn = DatabaseConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            // Update USERS table
+            userStmt = conn.prepareStatement(updateUserQuery);
+            userStmt.setString(1, name);
+            userStmt.setString(2, password);
+            userStmt.setString(3, role);
+            userStmt.setInt(4, id);
+            int userAffectedRows = userStmt.executeUpdate();
+
+            if (userAffectedRows == 0) {
+                throw new SQLException("Updating user failed, no rows affected.");
+            }
+
+            // Update USER_DETAIL table
+            userDetailStmt = conn.prepareStatement(updateUserDetailQuery);
+            userDetailStmt.setString(1, gender);
+            userDetailStmt.setString(2, contactNo);
+            userDetailStmt.setString(3, address);
+            userDetailStmt.setInt(4, id);
+            int userDetailAffectedRows = userDetailStmt.executeUpdate();
+
+            if (userDetailAffectedRows == 0) {
+                throw new SQLException("Updating user detail failed, no rows affected.");
+            }
+
+            conn.commit(); // Commit the transaction
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+            // Rollback the transaction if any exception occurs
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+
+            return false;
+        } finally {
+            // Close all resources
+            DatabaseConnection.closeQuietly(userDetailStmt);
+            DatabaseConnection.closeQuietly(userStmt);
+            DatabaseConnection.closeQuietly(conn);
+        }
+    }
+
+    // Update user (Admin)
+    public boolean updateUser(int id, String name, String email, String password, String role) {
+        String updateUserQuery = "UPDATE USERS SET NAME = ?, PASSWORD = ?, ROLE = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pr = conn.prepareStatement(updateUserQuery)) {
+                pr.setString(1, name);
+                pr.setString(2, password);
+                pr.setString(3, role);
+                pr.executeUpdate();
+                return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // // Return 2D array for displaying in a table
+    // public String[][] getDataForTable() {
+    //     String[][] data = new String[userList.size()][6];
+
+    //     int i = 0;
+
+    //     for (User u : userList) {
+    //         data[i][0] = u.getName();
+    //         data[i][1] = u.getEmail();
+    //         data[i][2] = u.getRole();
+
+    //         if (u instanceof Customer) {
+    //             Customer c = (Customer) u;
+    //             data[i][3] = c.getGender();
+    //             data[i][4] = c.getContactNo();
+    //             data[i][5] = c.getAddress();
+    //         } else if(u instanceof Worker) {
+    //             Worker w = (Worker) u;
+    //             data[i][3] = w.getGender();
+    //             data[i][4] = w.getContactNo();
+    //             data[i][5] = w.getAddress();
+    //         } else {
+    //             data[i][3] = "N/A";
+    //             data[i][4] = "N/A";
+    //             data[i][5] = "N/A";
+    //         }
+    //         i++;
+    //     }
+    //     return data;
+    // }
 }
