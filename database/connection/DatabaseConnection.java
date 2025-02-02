@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
-    private static final String URL = "jdbc:mysql://[server-ip]/[database-name][?useSSL=false&allowPublicKeyRetrieval=true]";
-    private static final String USER = "[username]";
-    private static final String PASSWORD = "[password]";
+    private static final String URL = "jdbc:mysql://10.100.110.96:3306/ecms?useSSL=false&allowPublicKeyRetrieval=true";
+    private static final String USER = "xyrophyte";
+    private static final String PASSWORD = "publicstaticvoidmain2006";
 
     // Private constructor to prevent direct instantiation
     private DatabaseConnection() {}
@@ -23,12 +23,12 @@ public class DatabaseConnection {
     }
 
     // Close connection safely (DAO should call this if try-with-resources is not used)
-    public static void closeConnection(Connection con) {
-        if (con != null) {
+    public static void closeQuietly(AutoCloseable resource) {
+        if (resource != null) {
             try {
-                con.close();
-            } catch (SQLException e) {
-                System.err.println("Error closing connection: " + e.getMessage());
+                resource.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
