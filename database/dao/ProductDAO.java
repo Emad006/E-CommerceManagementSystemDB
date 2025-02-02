@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
+import core.entities.Product;
 import database.connection.DatabaseConnection;
 
 public class ProductDAO {
@@ -100,5 +102,40 @@ public class ProductDAO {
     // Edit product with default image
     public void editProduct(int id, String name, double price, int stock, String category, String desc) {
         editProduct(id, name, price, stock, category, desc, null);
+    }
+
+    // Delete product
+    public void deleteProduct(int id) {
+        String deleteProductQuery = "DELETE FROM PRODUCTS WHERE PROD_ID = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pr = conn.prepareStatement(deleteProductQuery)) {
+                pr.setInt(1, id);
+                pr.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Get all products
+    public ArrayList<Product> getAllProducts() {
+        String fetchProductsQuery = "SELECT * FROM PRODUCTS";
+        ArrayList<Product> productList = new ArrayList<Product>();
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pr = conn.prepareStatement(fetchProductsQuery)) {
+                ResultSet rs = pr.executeQuery();
+
+                // Create a product object for each row and add to the array list
+                while (rs.next()) {
+                    Product p = new Product(rs.getInt("PROD_ID"), rs.getString("NAME"), rs.getDouble("PRICE"), rs.getInt("STOCK"), rs.getString("CAT"), rs.getString("DESCRIP"), rs.getString("IMG_PATH"));
+                    productList.add(p);
+                }
+
+                return productList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
