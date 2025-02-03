@@ -85,4 +85,64 @@ public class CardDAO {
             DatabaseConnection.closeQuietly(conn);
         }
     }
+
+    public void deleteCard(String customerEmail, String cardNumber) {
+        String deleteCardUserQuery = "DELETE FROM USER_CARD WHERE USER_ID = ? AND CARD_NO = ?";
+        String countCardUsersQuery = "SELECT COUNT(*) FROM USER_CARD WHERE CARD_NO = ?";
+        String deleteCardQuery = "DELETE FROM CARDS WHERE CARD_NO = ?";
+
+        // Fetch user ID from email
+        int userID = userDAO.getUserID(customerEmail);
+
+        Connection conn = null;
+        PreparedStatement deleteCardUserStmt = null;
+        PreparedStatement countCardUsersStmt = null;
+        PreparedStatement deleteCardStmt = null;
+        ResultSet countCardUsersRs = null;
+
+        // Start transaction
+        try {
+            conn = DatabaseConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            // Delete user-card relation
+            deleteCardUserStmt = conn.prepareStatement(deleteCardUserQuery);
+            deleteCardUserStmt.setInt(1, userID);
+            deleteCardUserStmt.setString(2, cardNumber);
+            deleteCardUserStmt.executeUpdate();
+
+            // Check if card is still in use by other users
+            countCardUsersStmt = conn.prepareStatement(countCardUsersQuery);
+            countCardUsersStmt.setString(1, cardNumber);
+            countCardUsersRs = countCardUsersStmt.executeQuery();
+
+            int count = -1;
+            if (countCardUsersRs.next()) {
+                count = countCardUsersRs.getInt(1);
+            }
+
+            // Delete card if no longer in use
+            if (count == 0) {
+                deleteCardStmt = conn.prepareStatement(deleteCardQuery);
+                deleteCardStmt.setString(1, cardNumber);
+                deleteCardStmt.executeUpdate();
+            }
+
+            conn.commit();
+        } catch (SQLException e) {
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            DatabaseConnection.closeQuietly(countCardUsersRs);
+            DatabaseConnection.closeQuietly(deleteCardStmt);
+            DatabaseConnection.closeQuietly(countCardUsersStmt);
+            DatabaseConnection.closeQuietly(deleteCardUserStmt);
+            DatabaseConnection.closeQuietly(conn);
+        }
+    }
 }
