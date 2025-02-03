@@ -106,7 +106,7 @@ public class UserDAO implements IUserDAO {
             String address) {
         String createUserQuery = "INSERT INTO USERS (NAME, EMAIL, PWD, ROLE) VALUES (?, ?, ?, ?)";
         String insertUserDetailQuery = "INSERT INTO USER_DETAIL (USER_ID, GENDER, CONTACT_NO, ADDR) VALUES (?, ?, ?, ?)";
-        String createCartQuery = "INSERT INTO CART (USER_ID) VALUES (?)";
+        String createCartQuery = "INSERT INTO CARTS (USER_ID) VALUES (?)";
 
         Connection conn = null;
         PreparedStatement userStmt = null;
