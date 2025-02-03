@@ -2,7 +2,10 @@ package database.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.mysql.cj.x.protobuf.MysqlxPrepare.Prepare;
 
 import database.connection.DatabaseConnection;
 
@@ -14,6 +17,7 @@ public class CardDAO {
     }
 
     public void addCard(String customerEmail, String cardNumber, String expiryDate, int securityCode, String nameOnCard, String billingAddress) {
+        String cardExistsQuery = "SELECT CARD_NO FROM CARDS WHERE CARD_NO = ?";
         String addCardQuery = "INSERT INTO CARDS (CARD_NO, EXP_DATE, CCV, CARD_NAME, BILL_ADDR) VALUES (?, ?, ?, ?, ?)";
         String addUserCardRelationQuery = "INSERT INTO USER_CARD (USER_ID, CARD_NO) VALUES (?, ?)";
 
@@ -27,22 +31,36 @@ public class CardDAO {
         int userID = userDAO.getUserID(customerEmail);
 
         Connection conn = null;
+        PreparedStatement cardExistsStmt = null;
         PreparedStatement addCardStmt = null;
         PreparedStatement addUserCardRelationStmt = null;
+        ResultSet cardExistsRs = null;
 
         // Start transaction
         try {
             conn = DatabaseConnection.getConnection();
             conn.setAutoCommit(false);
 
-            // Add card
-            addCardStmt = conn.prepareStatement(addCardQuery);
-            addCardStmt.setString(1, cardNumber);
-            addCardStmt.setString(2, expiryDateFormatted);
-            addCardStmt.setInt(3, securityCode);
-            addCardStmt.setString(4, nameOnCard);
-            addCardStmt.setString(5, billingAddress);
-            addCardStmt.executeUpdate();
+            boolean cardExists = false;
+
+            // Check if card already exists
+            cardExistsStmt = conn.prepareStatement(cardExistsQuery);
+            cardExistsStmt.setString(1, cardNumber);
+            cardExistsRs = cardExistsStmt.executeQuery();
+            if (cardExistsRs.next()) {
+                cardExists = true;
+            }
+
+            // Insert card only if it doesn't already exist
+            if (!cardExists) {
+                addCardStmt = conn.prepareStatement(addCardQuery);
+                addCardStmt.setString(1, cardNumber);
+                addCardStmt.setString(2, expiryDateFormatted);
+                addCardStmt.setInt(3, securityCode);
+                addCardStmt.setString(4, nameOnCard);
+                addCardStmt.setString(5, billingAddress);
+                addCardStmt.executeUpdate();
+            }
 
             // Add user-card relation
             addUserCardRelationStmt = conn.prepareStatement(addUserCardRelationQuery);
@@ -60,8 +78,10 @@ public class CardDAO {
                 ex.printStackTrace();
             }
         } finally {
+            DatabaseConnection.closeQuietly(cardExistsRs);
             DatabaseConnection.closeQuietly(addUserCardRelationStmt);
             DatabaseConnection.closeQuietly(addCardStmt);
+            DatabaseConnection.closeQuietly(cardExistsStmt);
             DatabaseConnection.closeQuietly(conn);
         }
     }
