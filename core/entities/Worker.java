@@ -31,7 +31,7 @@ public class Worker extends User implements IWorker{
 
     // TODO: Ensure validation on front-end to notify user for invalid contact
     public void setContactNo(String contactNo) {
-        if (contactNo.length() >= 10 && (contactNo.startsWith("0") || contactNo.startsWith("+880"))) {
+        if (contactNo.length() >= 10 && contactNo.length() <= 20) {
             this.contactNo = contactNo;
         } else {
             throw new IllegalArgumentException("Invalid Contact Number.");
