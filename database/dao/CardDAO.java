@@ -170,4 +170,53 @@ public class CardDAO {
 
         return customerCards;
     }
+
+    public boolean cardExistsOnUserAccount(String customerEmail, String cardNumber) {
+        String cardExistsQuery = "SELECT COUNT(*) FROM USER_CARD WHERE USER_ID = ? AND CARD_NO = ?";
+        int userID = userDAO.getUserID(customerEmail);
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pr = conn.prepareStatement(cardExistsQuery)) {
+                    pr.setInt(1, userID);
+                    pr.setString(2, cardNumber);
+                    try (ResultSet rs = pr.executeQuery()) {
+                        if (rs.next()) {
+                            return rs.getInt(1) > 0;
+                        }
+                    }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public String[][] getDataForTable(String email) {
+        String getUserCardsQuery = "SELECT * FROM CARDS WHERE CARD_NO IN (SELECT CARD_NO FROM USER_CARD WHERE USER_ID = ?)";
+        ArrayList<Card> customerCards = getCardsByCustomerEmail(email);
+        String[][] data = new String[customerCards.size()][5];
+        int userID = userDAO.getUserID(email);
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pr = conn.prepareStatement(getUserCardsQuery)) {
+                    pr.setInt(1, userID);
+                    try (ResultSet rs = pr.executeQuery()) {
+                        int i = 0;
+                        while (rs.next()) {
+                            data[i][0] = rs.getString("CARD_NO");
+                            data[i][1] = rs.getString("EXP_DATE");
+                            data[i][2] = Integer.toString(rs.getInt("CCV"));
+                            data[i][3] = rs.getString("CARD_NAME");
+                            data[i][4] = rs.getString("BILL_ADDR");
+                            i++;
+                        }
+
+                        return data;
+                    }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return new String[0][5];
+    }
 }
