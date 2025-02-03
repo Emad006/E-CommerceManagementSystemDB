@@ -1,5 +1,8 @@
 package core.entities;
 
+import java.time.YearMonth;
+import java.util.regex.Pattern;
+
 import interfaces.entities.ICard;
 
 public class Card implements ICard {
@@ -44,7 +47,7 @@ public class Card implements ICard {
     }
 
     private void setCardNumber(String cardNumber) {
-        if (cardNumber.length() == 16) {
+        if (cardNumber.length() >= 16 && cardNumber.length() <= 19) {
             this.cardNumber = cardNumber;
         } else {
             throw new IllegalArgumentException("Invalid Card Number.");
@@ -52,7 +55,7 @@ public class Card implements ICard {
     }
 
     private void setExpiryDate(String expiryDate) {
-        if (expiryDate.length() == 5) {
+        if (isValidExpiryDate(expiryDate)) {
             this.expiryDate = expiryDate;
         } else {
             throw new IllegalArgumentException("Invalid Expiry Date.");
@@ -74,5 +77,31 @@ public class Card implements ICard {
 
     private void setBillingAddress(String billingAddress) {
         this.billingAddress = billingAddress;
+    }
+
+    private boolean isValidExpiryDate(String dateStr) {
+
+        // Validate the expiry date format
+        Pattern pattern = Pattern.compile("^(0[1-9]|1[0-2])/[0-9]{2}$");
+        if (!pattern.matcher(dateStr).matches()) {
+            return false;
+        }
+
+        // Validate the expiry date (not expired)
+        String[] parts = dateStr.split("/");
+        int month = Integer.parseInt(parts[0]);
+        int year = Integer.parseInt(parts[1]);
+
+        // Converting the two-digit year to a four-digit year
+        int currentYear = YearMonth.now().getYear() % 100; // Get the last two digits of the year
+        int currentMonth = YearMonth.now().getMonthValue();
+
+        if (year > currentYear) {
+            return true;
+        } else if (year == currentYear && month > currentMonth) {
+            return true;
+        }
+
+        return false;
     }
 }

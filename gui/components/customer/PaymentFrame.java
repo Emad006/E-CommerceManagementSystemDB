@@ -2,7 +2,9 @@ package gui.components.customer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import core.entities.Customer;
 import core.entities.Card;
@@ -152,16 +154,16 @@ public class PaymentFrame extends JFrame {
         payNowButton.setFont(new Font("Verdana", Font.BOLD, 17));
         payNowButton.addActionListener(e -> {
             // Validate the input fields
-            if (cardNumberField.getText().length() != 16) {
-                JOptionPane.showMessageDialog(null, "Please enter a valid 16-digit card number", "Invalid Card Number",
+            if (cardNumberField.getText().length() < 16 || cardNumberField.getText().length() > 19) {
+                JOptionPane.showMessageDialog(null, "Card number must be between 16 and 19 digits", "Invalid Card Number",
                         JOptionPane.ERROR_MESSAGE);
                 return;
-            } else if (expiryDateField.getText().length() != 5) {
+            } else if (!isValidExpiryDate(expiryDateField.getText())) {
                 JOptionPane.showMessageDialog(null, "Please enter a valid expiry date in MM/YY format",
                         "Invalid Expiry Date", JOptionPane.ERROR_MESSAGE);
                 return;
-            } else if (securityCodeField.getText().length() != 3) {
-                JOptionPane.showMessageDialog(null, "Please enter a valid 3-digit security code",
+            } else if (Integer.parseInt(securityCodeField.getText()) < 100 || Integer.parseInt(securityCodeField.getText()) > 999) {
+                JOptionPane.showMessageDialog(null, "Security code must be between 100 and 999",
                         "Invalid Security Code", JOptionPane.ERROR_MESSAGE);
                 return;
             } else if (nameOnCardField.getText().isEmpty()) {
@@ -258,5 +260,31 @@ public class PaymentFrame extends JFrame {
                 break;
             }
         }
+    }
+
+    private boolean isValidExpiryDate(String dateStr) {
+
+        // Validate the expiry date format
+        Pattern pattern = Pattern.compile("^(0[1-9]|1[0-2])/[0-9]{2}$");
+        if (!pattern.matcher(dateStr).matches()) {
+            return false;
+        }
+
+        // Validate the expiry date (not expired)
+        String[] parts = dateStr.split("/");
+        int month = Integer.parseInt(parts[0]);
+        int year = Integer.parseInt(parts[1]);
+
+        // Converting the two-digit year to a four-digit year
+        int currentYear = YearMonth.now().getYear() % 100; // Get the last two digits of the year
+        int currentMonth = YearMonth.now().getMonthValue();
+
+        if (year > currentYear) {
+            return true;
+        } else if (year == currentYear && month > currentMonth) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -81,8 +81,8 @@ public class CardEditFrame extends JFrame {
                 }
 
                 // Check if card number is valid
-                if (cardNumberField.getText().length() != 16) {
-                    JOptionPane.showMessageDialog(null, "Card number must be 16 digits", "Error", JOptionPane.ERROR_MESSAGE);
+                if (cardNumberField.getText().length() < 16 || cardNumberField.getText().length() > 19) {
+                    JOptionPane.showMessageDialog(null, "Card number must be between 16 and 19 digits", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -93,7 +93,7 @@ public class CardEditFrame extends JFrame {
                 }
 
                 // Check if security code is valid
-                if (Integer.parseInt(securityCodeField.getText()) < 100 && Integer.parseInt(securityCodeField.getText()) > 999) {
+                if (Integer.parseInt(securityCodeField.getText()) < 100 || Integer.parseInt(securityCodeField.getText()) > 999) {
                     JOptionPane.showMessageDialog(null, "Security code must be between 100 and 999", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
