@@ -13,7 +13,7 @@ import core.entities.SuperAdmin;
 import database.connection.DatabaseConnection;
 import interfaces.database.dao.IUserDAO;
 
-public class UserDAO implements IUserDAO{
+public class UserDAO implements IUserDAO {
 
     public UserDAO() {
     }
@@ -25,13 +25,14 @@ public class UserDAO implements IUserDAO{
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(getUserIDQuery)) {
             ps.setString(1, email);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt("USER_ID");
-            } else {
-                return -1;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("USER_ID");
+                } else {
+                    return -1;
+                }
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
             return -1;
@@ -45,8 +46,10 @@ public class UserDAO implements IUserDAO{
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(userExistsQuery)) {
             ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -66,8 +69,10 @@ public class UserDAO implements IUserDAO{
                 PreparedStatement ps = conn.prepareStatement(validCredentialsQuery)) {
             ps.setString(1, email);
             ps.setString(2, password);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
