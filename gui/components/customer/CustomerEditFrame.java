@@ -240,10 +240,7 @@ public class CustomerEditFrame extends JFrame {
         }
 
         // Contact number validation
-        if ((contactNo.length() < 10) || (!contactNo.startsWith("0") && !contactNo.startsWith("+880"))) {
-            // Using "AND" cause if "OR" is used, if starts with "+880", check for "0"
-            // becomes true so shows error.
-            // Similar case when starts with "0".
+        if (contactNo.length() >= 10 && contactNo.length() <= 20) {
             JOptionPane.showMessageDialog(this, "Invalid contact number.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
