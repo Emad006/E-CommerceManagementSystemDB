@@ -63,7 +63,7 @@ public class UserDAO implements IUserDAO {
 
     // Check if credentials are valid
     public boolean validCredentials(String email, String password) {
-        String validCredentialsQuery = "SELECT * FROM USERS WHERE EMAIL = ? AND PASSWORD = ?";
+        String validCredentialsQuery = "SELECT * FROM USERS WHERE EMAIL = ? AND PWD = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(validCredentialsQuery)) {
@@ -85,7 +85,7 @@ public class UserDAO implements IUserDAO {
     public void addUser(String name, String email, String password, String role) {
         // Admin a = new Admin(name, email, password, role);
 
-        String createUserQuery = "INSERT INTO USERS (NAME, EMAIL, PASSWORD, ROLE) VALUES (?, ?, ?, ?)";
+        String createUserQuery = "INSERT INTO USERS (NAME, EMAIL, PWD, ROLE) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(createUserQuery)) {
@@ -104,7 +104,7 @@ public class UserDAO implements IUserDAO {
     // TODO: Validate data in front-end
     public void addUser(String name, String email, String password, String role, String gender, String contactNo,
             String address) {
-        String createUserQuery = "INSERT INTO USERS (NAME, EMAIL, PASSWORD, ROLE) VALUES (?, ?, ?, ?)";
+        String createUserQuery = "INSERT INTO USERS (NAME, EMAIL, PWD, ROLE) VALUES (?, ?, ?, ?)";
         String insertUserDetailQuery = "INSERT INTO USER_DETAIL (USER_ID, GENDER, CONTACT_NO, ADDR) VALUES (?, ?, ?, ?)";
         String createCartQuery = "INSERT INTO CART (USER_ID) VALUES (?)";
 
@@ -294,7 +294,7 @@ public class UserDAO implements IUserDAO {
     // Update user (Customer || Worker)
     public boolean updateUser(int id, String name, String email, String password, String role, String gender,
             String contactNo, String address) {
-        String updateUserQuery = "UPDATE USERS SET NAME = ?, PASSWORD = ?, ROLE = ? WHERE USER_ID = ?";
+        String updateUserQuery = "UPDATE USERS SET NAME = ?, PWD = ?, ROLE = ? WHERE USER_ID = ?";
         String updateUserDetailQuery = "UPDATE USER_DETAIL SET GENDER = ?, CONTACT_NO = ?, ADDR = ? WHERE USER_ID = ?";
 
         Connection conn = null;
@@ -354,7 +354,7 @@ public class UserDAO implements IUserDAO {
 
     // Update user (Admin)
     public boolean updateUser(int id, String name, String email, String password, String role) {
-        String updateUserQuery = "UPDATE USERS SET NAME = ?, PASSWORD = ?, ROLE = ?";
+        String updateUserQuery = "UPDATE USERS SET NAME = ?, PWD = ?, ROLE = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement pr = conn.prepareStatement(updateUserQuery)) {
