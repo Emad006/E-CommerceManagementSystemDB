@@ -8,16 +8,16 @@ import java.time.YearMonth;
 import java.util.regex.Pattern;
 
 import core.entities.Customer;
-import controllers.CardManager;
+import database.dao.CardDAO;
 
 public class CardEditFrame extends JFrame {
     private Customer customer;
-    private CardManager cardManager;
+    private CardDAO cardDAO;
 
 
     public CardEditFrame(Customer customer) {
         this.customer = customer;
-        cardManager = new CardManager();
+        cardDAO = new CardDAO();
 
         // Set frame title
         setTitle("Edit Payment Information");
@@ -99,13 +99,13 @@ public class CardEditFrame extends JFrame {
                 }
 
                 // Check if card already added
-                if (cardManager.cardExistsOnUserAccount(customer.getEmail(), cardNumberField.getText())) {
+                if (cardDAO.cardExistsOnUserAccount(customer.getEmail(), cardNumberField.getText())) {
                     JOptionPane.showMessageDialog(null, "Card already exists", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 // Add card
-                cardManager.addCard(customer.getEmail(), cardNumberField.getText(), expiryDateField.getText(), Integer.parseInt(securityCodeField.getText()), nameOnCardField.getText(), billingAddressField.getText());
+                cardDAO.addCard(customer.getEmail(), cardNumberField.getText(), expiryDateField.getText(), Integer.parseInt(securityCodeField.getText()), nameOnCardField.getText(), billingAddressField.getText());
 
 
                 // Show success message
@@ -128,13 +128,13 @@ public class CardEditFrame extends JFrame {
                 }
 
                 // Check if card isn't added
-                if (!cardManager.cardExistsOnUserAccount(customer.getEmail(), cardNumberField.getText())) {
+                if (!cardDAO.cardExistsOnUserAccount(customer.getEmail(), cardNumberField.getText())) {
                     JOptionPane.showMessageDialog(null, "Card doesn't exist", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 // Delete card
-                cardManager.deleteCard(customer.getEmail(), cardNumberField.getText());
+                cardDAO.deleteCard(customer.getEmail(), cardNumberField.getText());
 
                 // Show success message
                 JOptionPane.showMessageDialog(null, "Card deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -244,7 +244,7 @@ public class CardEditFrame extends JFrame {
         String[] columnNames = {"Card Number", "Expiry Date", "Security Code", "Name on Card", "Billing Address"};
 
         // Create data array
-        String[][] data = cardManager.getDataForTable(customer.getEmail());
+        String[][] data = cardDAO.getDataForTable(customer.getEmail());
 
         // Create table with data
         JTable table = new JTable(data, columnNames);

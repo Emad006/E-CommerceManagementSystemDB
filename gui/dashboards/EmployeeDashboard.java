@@ -2,7 +2,7 @@ package gui.dashboards;
 
 import javax.swing.*;
 
-import controllers.UserManager;
+import database.dao.UserDAO;
 import core.entities.User;
 import core.entities.Admin;
 import core.entities.SuperAdmin;
@@ -15,6 +15,7 @@ import gui.components.employee.ManageProductsPanel;
 import gui.components.employee.ManageUsersPanel;
 
 public class EmployeeDashboard implements ActionListener {
+    private UserDAO userDAO;
     private User user;
     private JFrame frame;
     private JPanel leftPanel, mainPanel;
@@ -26,8 +27,8 @@ public class EmployeeDashboard implements ActionListener {
     private ManageProductsPanel productPanel;
 
     public EmployeeDashboard(String email) {
-        UserManager userManager = new UserManager();
-        user = userManager.searchUser(email);
+        userDAO = new UserDAO();
+        user = userDAO.searchUser(email);
 
         frame = new JFrame("Dashboard");
         frame.setSize(980, 810);

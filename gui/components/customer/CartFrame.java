@@ -2,7 +2,7 @@ package gui.components.customer;
 
 import javax.swing.*;
 
-import controllers.ProductManager;
+import database.dao.ProductDAO;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -11,12 +11,14 @@ import core.entities.Customer;
 import core.entities.Product;
 
 public class CartFrame extends JFrame {
+    private ProductDAO productDAO;
     private Customer customer;
     private JLabel subTotalLabel, taxLabel, totalLabel;
 
     public CartFrame(Customer customer) {
 
         this.customer = customer;
+        productDAO = new ProductDAO();
 
         setTitle("Cart");
         setSize(1000, 600);
@@ -125,8 +127,7 @@ public class CartFrame extends JFrame {
     }
 
     private void deductProductStock(Product product, int quantity) {
-        ProductManager productManager = new ProductManager();
-        productManager.deductStock(product.getID(), quantity);
+        productDAO.deductStock(product.getID(), quantity);
     }
 
     void paymentSuccessful() {

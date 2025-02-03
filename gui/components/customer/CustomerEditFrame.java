@@ -6,13 +6,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import core.entities.Customer;
-import controllers.UserManager;
+import database.dao.UserDAO;
 
 public class CustomerEditFrame extends JFrame {
     private Customer customer;
+    private UserDAO userDAO;
 
     public CustomerEditFrame(Customer customer) {
         this.customer = customer;
+        userDAO = new UserDAO();
 
         // Set frame title
         setTitle("Edit Customer Account Information");
@@ -247,8 +249,7 @@ public class CustomerEditFrame extends JFrame {
         }
 
         // Proceed to update customer
-        UserManager userManager = new UserManager();
-        if (userManager.updateUser(name, customer.getEmail(), password, customer.getRole(), gender, contactNo,
+        if (userDAO.updateUser(customer.getID(), name, customer.getEmail(), password, customer.getRole(), gender, contactNo,
                 address)) {
             JOptionPane.showMessageDialog(this, "Details updated successfully.", "Success",
                     JOptionPane.INFORMATION_MESSAGE);

@@ -10,21 +10,26 @@ import java.util.ArrayList;
 
 import core.entities.Product;
 import core.entities.Customer;
-import controllers.ProductManager;
-import controllers.UserManager;
+import database.dao.ProductDAO;
+import database.dao.UserDAO;
 import gui.auth.LoginPage;
 import gui.components.customer.CartFrame;
 import gui.components.customer.CustomerEditFrame;
 import gui.components.customer.ProductPanel;
 
 public class CustomerDashboard extends JFrame {
+    private ProductDAO productDAO;
+    private UserDAO userDAO;
     private ArrayList<Product> productList;
     private Customer customer;
     private JPanel productSpace; // productSpace is declared here to be accessible in the search logic
 
     public CustomerDashboard(String customerEmail) {
+        productDAO = new ProductDAO();
+        userDAO = new UserDAO();
+
         // Initialize the product list and product panels
-        productList = new ProductManager().getAllProducts();
+        productList = productDAO.getAllProducts();
         // this.customerEmail = customerEmail;
         updateCustomerObject(customerEmail);
 
@@ -151,7 +156,7 @@ public class CustomerDashboard extends JFrame {
         westPanel.setBackground(Color.decode("#041a42"));
         westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
 
-        JComboBox<String> categoryComboBox = new JComboBox<>(new ProductManager().getAllCategories());
+        JComboBox<String> categoryComboBox = new JComboBox<>(productDAO.getAllCategories());
         categoryComboBox.setBackground(Color.decode("#041a42"));
         categoryComboBox.setForeground(Color.WHITE);
         categoryComboBox.setBounds(0, 290, 120, 30);
@@ -388,8 +393,7 @@ public class CustomerDashboard extends JFrame {
 
     // Update the Customer object
     private void updateCustomerObject(String customerEmail) {
-        UserManager userManager = new UserManager();
-        customer = (Customer) userManager.searchUser(customerEmail);
+        customer = (Customer) userDAO.searchUser(customerEmail);
     }
 
     private void performSearch(String query) {

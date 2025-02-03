@@ -2,18 +2,18 @@ package gui.components.employee;
 
 import javax.swing.*;
 
-import controllers.ProductManager;
+import database.dao.ProductDAO;
 import core.entities.Product;
 
 import java.awt.*;
 
 public class ManageProductsPanel {
     private JPanel mainPanel;
-    private ProductManager productManager;
+    private ProductDAO productDAO;
 
     public ManageProductsPanel(JPanel mainPanel) {
         this.mainPanel = mainPanel;
-        productManager = new ProductManager();
+        productDAO = new ProductDAO();
     }
 
     // Add product panel
@@ -169,7 +169,7 @@ public class ManageProductsPanel {
             }
 
             // Check if product ID already exists
-            if (productManager.productExists(productID)) {
+            if (productDAO.productExists(productID)) {
                 JOptionPane.showMessageDialog(null, "Product with ID " + productID + " already exists.", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
@@ -190,10 +190,10 @@ public class ManageProductsPanel {
 
             // Proceed to add product
             if (productImagePath.isEmpty()) {
-                productManager.addProduct(productID, productName, productPrice, productStock, productCategory,
+                productDAO.addProduct(productID, productName, productPrice, productStock, productCategory,
                         productDescription);
             } else {
-                productManager.addProduct(productID, productName, productPrice, productStock, productCategory,
+                productDAO.addProduct(productID, productName, productPrice, productStock, productCategory,
                         productDescription, productImagePath);
             }
 
@@ -383,14 +383,14 @@ public class ManageProductsPanel {
             }
 
             // Check if ID is valid
-            if (!productManager.productExists(productID)) {
+            if (!productDAO.productExists(productID)) {
                 JOptionPane.showMessageDialog(null, "Product with ID " + productID + " does not exist.", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             // Fetch product details
-            Product product = productManager.searchProduct(productID);
+            Product product = productDAO.searchProduct(productID);
 
             // Populate fields
             nameField.setText(product.getName());
@@ -443,10 +443,10 @@ public class ManageProductsPanel {
 
             // Proceed to edit product
             if (productImagePath.isEmpty()) {
-                productManager.editProduct(productID, productName, productPrice, productStock, productCategory,
+                productDAO.editProduct(productID, productName, productPrice, productStock, productCategory,
                         productDescription);
             } else {
-                productManager.editProduct(productID, productName, productPrice, productStock, productCategory,
+                productDAO.editProduct(productID, productName, productPrice, productStock, productCategory,
                         productDescription, productImagePath);
             }
 
@@ -603,14 +603,14 @@ public class ManageProductsPanel {
             }
 
             // Check if ID is valid
-            if (!productManager.productExists(productID)) {
+            if (!productDAO.productExists(productID)) {
                 JOptionPane.showMessageDialog(null, "Product with ID " + productID + " does not exist.", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             // Fetch product details
-            Product product = productManager.searchProduct(productID);
+            Product product = productDAO.searchProduct(productID);
 
             // Populate fields
             nameField.setText(product.getName());
@@ -639,14 +639,14 @@ public class ManageProductsPanel {
             }
 
             // Check if ID is valid
-            if (!productManager.productExists(productID)) {
+            if (!productDAO.productExists(productID)) {
                 JOptionPane.showMessageDialog(null, "Product with ID " + productID + " does not exist.", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             // Proceed to delete product
-            productManager.deleteProduct(productID);
+            productDAO.deleteProduct(productID);
             JOptionPane.showMessageDialog(null, "Product with ID " + productID + " has been deleted.", "Success",
                     JOptionPane.INFORMATION_MESSAGE);
         });
@@ -671,7 +671,7 @@ public class ManageProductsPanel {
         // Column names
         String[] columnNames = { "ID", "Name", "Price ($)", "Stock", "Category", "Description", "Image Path" };
 
-        String[][] data = productManager.getDataForTable();
+        String[][] data = productDAO.getDataForTable();
 
         // Create table with data
         JTable productTable = new JTable(data, columnNames);

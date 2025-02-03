@@ -6,10 +6,11 @@ import java.awt.event.*;
 import javax.swing.border.Border;
 import java.util.regex.Pattern;
 
-import controllers.UserManager;
+import database.dao.UserDAO;
 import gui.auth.Registration;
 
 public class Registration implements ActionListener {
+    private UserDAO userDAO;
     private JFrame frame;
     private JTextField nameField, emailField, addressField, contactField;
     private JPasswordField passwordField, cpasswordField;
@@ -17,6 +18,7 @@ public class Registration implements ActionListener {
     private JCheckBox checkBox1;
 
     public Registration() {
+        userDAO = new UserDAO();
 
         // Doesn't render properly on macOS, had to get cross-platform look and feel.
         try {
@@ -398,11 +400,10 @@ public class Registration implements ActionListener {
             return;
         }
 
-        UserManager userManager = new UserManager();
-        if (userManager.userExists(email)) {
+        if (userDAO.userExists(email)) {
             JOptionPane.showMessageDialog(frame, "User already exists", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            userManager.addUser(name, email, password, "Customer", gender, contact, address);
+            userDAO.addUser(name, email, password, "Customer", gender, contact, address);
             JOptionPane.showMessageDialog(frame, "Registration Successful. Please Login", "Success",
                     JOptionPane.INFORMATION_MESSAGE);
             frame.dispose();

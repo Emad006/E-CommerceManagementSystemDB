@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.regex.Pattern;
 
-import controllers.UserManager;
+import database.dao.UserDAO;
 import core.entities.User;
 import core.entities.Worker;
 import core.entities.Admin;
@@ -14,12 +14,12 @@ import core.entities.SuperAdmin;
 public class ManageUsersPanel {
     private JPanel mainPanel;
     private User user;
-    private UserManager userManager;
+    private UserDAO userDAO;
 
     public ManageUsersPanel(JPanel mainPanel, User user) {
         this.mainPanel = mainPanel;
         this.user = user;
-        userManager = new UserManager();
+        userDAO = new UserDAO();
     }
 
     // Add Users Panel
@@ -267,18 +267,18 @@ public class ManageUsersPanel {
             }
 
             // Check if user already exists
-            if (userManager.userExists(email)) {
+            if (userDAO.userExists(email)) {
                 JOptionPane.showMessageDialog(mainPanel, "User already exists", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
             // Proceed to add user based on role after validations
             if (role.equals("Admin")) {
-                userManager.addUser(name, email, password, role);
+                userDAO.addUser(name, email, password, role);
                 JOptionPane.showMessageDialog(mainPanel, "Added user successfully.", "Success",
                         JOptionPane.INFORMATION_MESSAGE);
             } else {
-                userManager.addUser(name, email, password, role, gender, contactNo, address);
+                userDAO.addUser(name, email, password, role, gender, contactNo, address);
                 JOptionPane.showMessageDialog(mainPanel, "Added user successfully.", "Success",
                         JOptionPane.INFORMATION_MESSAGE);
             }
@@ -480,13 +480,13 @@ public class ManageUsersPanel {
                 return;
             }
 
-            if (!userManager.userExists(email)) {
+            if (!userDAO.userExists(email)) {
                 JOptionPane.showMessageDialog(mainPanel, "User does not exist.", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            User user = userManager.searchUser(email);
+            User user = userDAO.searchUser(email);
             if (user instanceof Admin || user instanceof SuperAdmin) {
                 nameField.setText(user.getName());
                 passwordField.setText(user.getPassword());
@@ -557,7 +557,7 @@ public class ManageUsersPanel {
 
             // Validations
 
-            User user = userManager.searchUser(email);
+            User user = userDAO.searchUser(email);
 
             // Empty field check
             if (user instanceof Admin || user instanceof SuperAdmin) {
@@ -611,7 +611,7 @@ public class ManageUsersPanel {
             // Proceed to update user based on role after validations
             if (user instanceof Admin) {
                 if (this.user instanceof SuperAdmin) {
-                    userManager.updateUser(name, email, password, role);
+                    userDAO.updateUser(user.getID(), name, email, password, role);
                     JOptionPane.showMessageDialog(mainPanel, "Updated user successfully.", "Success",
                             JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -619,7 +619,7 @@ public class ManageUsersPanel {
                             JOptionPane.ERROR_MESSAGE);
                 }
             } else if (user instanceof Customer || user instanceof Worker) {
-                userManager.updateUser(name, email, password, role, gender, contactNo, address);
+                userDAO.updateUser(user.getID(), name, email, password, role, gender, contactNo, address);
                 JOptionPane.showMessageDialog(mainPanel, "Updated user successfully.", "Success",
                         JOptionPane.INFORMATION_MESSAGE);
             } else if (user instanceof SuperAdmin) {
@@ -803,13 +803,13 @@ public class ManageUsersPanel {
                 return;
             }
 
-            if (!userManager.userExists(email)) {
+            if (!userDAO.userExists(email)) {
                 JOptionPane.showMessageDialog(mainPanel, "User does not exist.", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            User user = userManager.searchUser(email);
+            User user = userDAO.searchUser(email);
             if (user instanceof Admin || user instanceof SuperAdmin) {
                 nameField.setText(user.getName());
                 roleComboBox.setSelectedItem(user.getRole());
@@ -876,26 +876,26 @@ public class ManageUsersPanel {
                 return;
             }
 
-            if (!userManager.userExists(email)) {
+            if (!userDAO.userExists(email)) {
                 JOptionPane.showMessageDialog(mainPanel, "User does not exist.", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            if (userManager.searchUser(email) instanceof SuperAdmin) {
+            if (userDAO.searchUser(email) instanceof SuperAdmin) {
                 JOptionPane.showMessageDialog(mainPanel, "Cannot delete super-admin.", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
-            } else if (userManager.searchUser(email) instanceof Admin) {
+            } else if (userDAO.searchUser(email) instanceof Admin) {
                 if (this.user instanceof SuperAdmin) {
-                    userManager.deleteUser(email);
+                    userDAO.deleteUser(email);
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "Cannot delete admin.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             } else {
-                userManager.deleteUser(email);
+                userDAO.deleteUser(email);
             }
 
             JOptionPane.showMessageDialog(mainPanel, "Deleted user successfully.", "Success",
@@ -910,37 +910,37 @@ public class ManageUsersPanel {
 
     // List Users Panel
     public void showListUsersPanel() {
-        mainPanel.removeAll();
-        mainPanel.setLayout(new BorderLayout());
+        // mainPanel.removeAll();
+        // mainPanel.setLayout(new BorderLayout());
 
-        // Title label
-        JLabel listUsersLabel = new JLabel("List of Users");
-        listUsersLabel.setFont(new Font("Serif", Font.BOLD, 30));
-        listUsersLabel.setForeground(new Color(219, 226, 233));
-        listUsersLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        mainPanel.add(listUsersLabel, BorderLayout.NORTH);
+        // // Title label
+        // JLabel listUsersLabel = new JLabel("List of Users");
+        // listUsersLabel.setFont(new Font("Serif", Font.BOLD, 30));
+        // listUsersLabel.setForeground(new Color(219, 226, 233));
+        // listUsersLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        // mainPanel.add(listUsersLabel, BorderLayout.NORTH);
 
-        // Column names
-        String[] columnNames = { "Name", "Email", "Role", "Gender", "Contact", "Address" };
+        // // Column names
+        // String[] columnNames = { "Name", "Email", "Role", "Gender", "Contact", "Address" };
 
-        // Sample data
-        String[][] data = userManager.getDataForTable();
+        // // Sample data
+        // String[][] data = userDAO.getDataForTable();
 
-        // Create table with data
-        JTable userTable = new JTable(data, columnNames);
-        userTable.setFillsViewportHeight(true);
-        userTable.setForeground(Color.WHITE); // Set text color for the table
-        userTable.setBackground(new Color(40, 40, 40)); // Set background color for the table
+        // // Create table with data
+        // JTable userTable = new JTable(data, columnNames);
+        // userTable.setFillsViewportHeight(true);
+        // userTable.setForeground(Color.WHITE); // Set text color for the table
+        // userTable.setBackground(new Color(40, 40, 40)); // Set background color for the table
 
-        // Make table scrollable
-        JScrollPane scrollPane = new JScrollPane(userTable);
-        scrollPane.setPreferredSize(new Dimension(800, 600)); // Set preferred size for the scroll pane
+        // // Make table scrollable
+        // JScrollPane scrollPane = new JScrollPane(userTable);
+        // scrollPane.setPreferredSize(new Dimension(800, 600)); // Set preferred size for the scroll pane
 
-        // Add scroll pane to main panel
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        // // Add scroll pane to main panel
+        // mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        mainPanel.revalidate();
-        mainPanel.repaint();
+        // mainPanel.revalidate();
+        // mainPanel.repaint();
     }
 
     private boolean validEmail(String email) {

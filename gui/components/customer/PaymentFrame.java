@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import core.entities.Customer;
 import core.entities.Card;
-import controllers.CardManager;
+import database.dao.CardDAO;
 
 public class PaymentFrame extends JFrame {
     private JTextField newAddressField;
@@ -16,12 +16,12 @@ public class PaymentFrame extends JFrame {
     private JTextField nameOnCardField;
     private JComboBox<String> savedCardsComboBox;
     private JCheckBox sameAsDelivery;
-    private CardManager cardManager;
+    private CardDAO cardDAO;
     private Customer customer;
 
     public PaymentFrame(Customer customer, CartFrame cartFrame) {
         this.customer = customer;
-        cardManager = new CardManager();
+        cardDAO = new CardDAO();
 
         // Set the frame properties
         setTitle("Payment");
@@ -224,7 +224,7 @@ public class PaymentFrame extends JFrame {
     }
 
     private void loadSavedCards() {
-        ArrayList<Card> savedCards = cardManager.getCardsByCustomerEmail(customer.getEmail());
+        ArrayList<Card> savedCards = cardDAO.getCardsByCustomerEmail(customer.getEmail());
         savedCardsComboBox.addItem("Enter New Payment Method");
         for (Card card : savedCards) {
             savedCardsComboBox.addItem(card.getCardNumber() + " - " + card.getExpiryDate());
@@ -247,7 +247,7 @@ public class PaymentFrame extends JFrame {
     }
 
     private void populateCardFields(String cardDetails) {
-        ArrayList<Card> savedCards = cardManager.getCardsByCustomerEmail(customer.getEmail());
+        ArrayList<Card> savedCards = cardDAO.getCardsByCustomerEmail(customer.getEmail());
         for (Card card : savedCards) {
             if ((card.getCardNumber() + " - " + card.getExpiryDate()).equals(cardDetails)) {
                 cardNumberField.setText(card.getCardNumber());

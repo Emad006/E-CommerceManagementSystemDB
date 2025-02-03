@@ -1,6 +1,6 @@
 package gui.auth;
 
-import controllers.UserManager;
+import database.dao.UserDAO;
 import core.entities.SuperAdmin;
 import core.entities.Admin;
 import core.entities.User;
@@ -16,6 +16,7 @@ import java.awt.event.*;
 import java.util.regex.Pattern;
 
 public class LoginPage implements ActionListener {
+    private UserDAO userDAO;
     private JFrame frame;
     private JTextField emailField;
     private JPasswordField passwordField;
@@ -23,6 +24,8 @@ public class LoginPage implements ActionListener {
     private JButton registerButton;
 
     public LoginPage() {
+        userDAO = new UserDAO();
+
 
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -195,13 +198,13 @@ public class LoginPage implements ActionListener {
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            UserManager userManager = new UserManager();
-            if (userManager.validCredentials(email.toLowerCase(), pass)) {
+
+            if (userDAO.validCredentials(email.toLowerCase(), pass)) {
                 JOptionPane.showMessageDialog(frame, "Successfully logged in.", "Success",
                         JOptionPane.INFORMATION_MESSAGE);
                 // Close this frame and open admin/customer dashboard
                 // Pass the user object (duplicate) to the constructor of the dashboard
-                User u = userManager.searchUser(email);
+                User u = userDAO.searchUser(email);
                 if (u instanceof Admin || u instanceof SuperAdmin || u instanceof Worker) {
                     frame.dispose();
                     new EmployeeDashboard(email);
