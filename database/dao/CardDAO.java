@@ -159,7 +159,14 @@ public class CardDAO {
             pr.setInt(1, userID);
             try (ResultSet rs = pr.executeQuery()) {
                 while (rs.next()) {
-                    Card c = new Card(email, rs.getString("CARD_NO"), rs.getString("EXP_DATE").toString(),
+
+                    // Process date
+                    String[] expiryDate = rs.getString("EXP_DATE").split("-");
+                    String expiryMonth = expiryDate[1];
+                    String expiryYear = expiryDate[0].substring(2);
+                    String expiryDateFormatted = expiryMonth + "/" + expiryYear;
+
+                    Card c = new Card(email, rs.getString("CARD_NO"), expiryDateFormatted,
                             rs.getInt("CCV"), rs.getString("CARd_NAME"), rs.getString("BILL_ADDR"));
                     customerCards.add(c);
                 }
@@ -177,13 +184,13 @@ public class CardDAO {
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement pr = conn.prepareStatement(cardExistsQuery)) {
-                    pr.setInt(1, userID);
-                    pr.setString(2, cardNumber);
-                    try (ResultSet rs = pr.executeQuery()) {
-                        if (rs.next()) {
-                            return rs.getInt(1) > 0;
-                        }
-                    }
+            pr.setInt(1, userID);
+            pr.setString(2, cardNumber);
+            try (ResultSet rs = pr.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -199,20 +206,20 @@ public class CardDAO {
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement pr = conn.prepareStatement(getUserCardsQuery)) {
-                    pr.setInt(1, userID);
-                    try (ResultSet rs = pr.executeQuery()) {
-                        int i = 0;
-                        while (rs.next()) {
-                            data[i][0] = rs.getString("CARD_NO");
-                            data[i][1] = rs.getString("EXP_DATE");
-                            data[i][2] = Integer.toString(rs.getInt("CCV"));
-                            data[i][3] = rs.getString("CARD_NAME");
-                            data[i][4] = rs.getString("BILL_ADDR");
-                            i++;
-                        }
+            pr.setInt(1, userID);
+            try (ResultSet rs = pr.executeQuery()) {
+                int i = 0;
+                while (rs.next()) {
+                    data[i][0] = rs.getString("CARD_NO");
+                    data[i][1] = rs.getString("EXP_DATE");
+                    data[i][2] = Integer.toString(rs.getInt("CCV"));
+                    data[i][3] = rs.getString("CARD_NAME");
+                    data[i][4] = rs.getString("BILL_ADDR");
+                    i++;
+                }
 
-                        return data;
-                    }
+                return data;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
