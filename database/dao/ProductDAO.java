@@ -7,9 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import core.entities.Product;
+import interfaces.database.dao.IProductDAO;
 import database.connection.DatabaseConnection;
 
-public class ProductDAO {
+public class ProductDAO implements IProductDAO {
 
     public ProductDAO() {}
 
@@ -117,6 +118,39 @@ public class ProductDAO {
         }
     }
 
+    public Product searchProduct(int id) {
+        String searchProductQuery = "SELECT * FROM PRODUCTS WHERE PROD_ID = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pr = conn.prepareStatement(searchProductQuery)) {
+                pr.setInt(1, id);
+                ResultSet rs = pr.executeQuery();
+
+                if (rs.next()) {
+                    return new Product(id, rs.getString("NAME"), rs.getDouble("PRICE"), rs.getInt("STOCK"), rs.getString("CAT"), rs.getString("DESCRIP"), rs.getString("IMG_PATH"));
+                } else {
+                    return null;
+                }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // Deduct stock after checkout
+    public void deductStock(int id, int quantity) {
+        String deductStockQuery = "UPDATE PRODUCTS SET STOCK = STOCK - ? WHERE PROD_ID = ?";
+
+        try(Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pr = conn.prepareStatement(deductStockQuery)) {
+                pr.setInt(1, quantity);
+                pr.setInt(2, id);
+                pr.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     // Get all products
     public ArrayList<Product> getAllProducts() {
         String fetchProductsQuery = "SELECT * FROM PRODUCTS";
@@ -155,20 +189,6 @@ public class ProductDAO {
         }
 
         return categories.toArray(new String[0]);
-    }
-
-    // Deduct stock after checkout
-    public void deductStock(int id, int quantity) {
-        String deductStockQuery = "UPDATE PRODUCTS SET STOCK = STOCK - ? WHERE PROD_ID = ?";
-
-        try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement pr = conn.prepareStatement(deductStockQuery)) {
-                pr.setInt(1, quantity);
-                pr.setInt(2, id);
-                pr.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     // Get data for table
