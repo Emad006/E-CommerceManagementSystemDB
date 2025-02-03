@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.YearMonth;
+import java.util.regex.Pattern;
 
 import core.entities.Customer;
 import controllers.CardManager;
@@ -85,7 +87,7 @@ public class CardEditFrame extends JFrame {
                 }
 
                 // Check if expiry date is valid
-                if (expiryDateField.getText().length() != 5 || !expiryDateField.getText().contains("/")) {
+                if (!isValidExpiryDate(expiryDateField.getText())) {
                     JOptionPane.showMessageDialog(null, "Expiry date must be in MM/YY format", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -256,5 +258,31 @@ public class CardEditFrame extends JFrame {
 
         // Make frame visible
         cardDetailsFrame.setVisible(true);
+    }
+
+    private boolean isValidExpiryDate(String dateStr) {
+
+        // Validate the expiry date format
+        Pattern pattern = Pattern.compile("^(0[1-9]|1[0-2])/[0-9]{2}$");
+        if (!pattern.matcher(dateStr).matches()) {
+            return false;
+        }
+
+        // Validate the expiry date (not expired)
+        String[] parts = dateStr.split("/");
+        int month = Integer.parseInt(parts[0]);
+        int year = Integer.parseInt(parts[1]);
+
+        // Converting the two-digit year to a four-digit year
+        int currentYear = YearMonth.now().getYear() % 100; // Get the last two digits of the year
+        int currentMonth = YearMonth.now().getMonthValue();
+
+        if (year > currentYear) {
+            return true;
+        } else if (year == currentYear && month > currentMonth) {
+            return true;
+        }
+
+        return false;
     }
 }
