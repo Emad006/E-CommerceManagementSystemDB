@@ -137,7 +137,8 @@ public class ManageUsersPanel {
                     addressLabel.setVisible(false);
                     addressField.setVisible(false);
                 }
-            } else if (roleComboBox.getSelectedItem().equals("Customer") || roleComboBox.getSelectedItem().equals("Worker")) {
+            } else if (roleComboBox.getSelectedItem().equals("Customer")
+                    || roleComboBox.getSelectedItem().equals("Worker")) {
                 genderLabel.setVisible(true);
                 genderComboBox.setVisible(true);
                 contactNoLabel.setVisible(true);
@@ -225,11 +226,7 @@ public class ManageUsersPanel {
                 }
 
                 // Check if contact number is valid
-                if ((contactNo.length() < 10) || (!contactNo.startsWith("0") &&
-                        !contactNo.startsWith("+880"))) {
-                    // Using "AND" cause if "OR" is used, if starts with "+880", check for "0"
-                    // becomes true so shows error.
-                    // Similar case when starts with "0".
+                if (contactNo.length() < 10 && contactNo.length() > 20) {
                     JOptionPane.showMessageDialog(mainPanel, "Invalid contact number.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                     return;
@@ -577,10 +574,7 @@ public class ManageUsersPanel {
                 }
 
                 // Contact number validation
-                if ((contactNo.length() < 10) || (!contactNo.startsWith("0") && !contactNo.startsWith("+880"))) {
-                    // Using "AND" cause if "OR" is used, if starts with "+880", check for "0"
-                    // becomes true so shows error.
-                    // Similar case when starts with "0".
+                if (contactNo.length() < 10 && contactNo.length() > 20) {
                     JOptionPane.showMessageDialog(mainPanel, "Invalid contact number.", "Error",
                             JOptionPane.ERROR_MESSAGE);
                     return;
