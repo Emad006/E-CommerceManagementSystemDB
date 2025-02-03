@@ -138,4 +138,36 @@ public class ProductDAO {
             return null;
         }
     }
+
+    // Get all categories
+    public String[] getAllCategories() {
+        String fetchCategoriesQuery = "SELECT DISTINCT CAT FROM PRODUCTS";
+        ArrayList<String> categories = new ArrayList<String>();
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(fetchCategoriesQuery)) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    categories.add(rs.getString("CAT"));
+                }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return categories.toArray(new String[0]);
+    }
+
+    // Deduct stock after checkout
+    public void deductStock(int id, int quantity) {
+        String deductStockQuery = "UPDATE PRODUCTS SET STOCK = STOCK - ? WHERE PROD_ID = ?";
+
+        try(Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pr = conn.prepareStatement(deductStockQuery)) {
+                pr.setInt(1, quantity);
+                pr.setInt(2, id);
+                pr.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
