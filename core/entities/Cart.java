@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
-import controllers.ProductManager;
+import database.dao.ProductDAO;
 import interfaces.entities.ICart;
 
 public class Cart implements ICart {
@@ -86,7 +86,7 @@ public class Cart implements ICart {
     // Load cart from database
     private void loadCartToMemory() {
         // Try to create file if it doesn't exist
-        File file = new File("../database/cartData.txt");
+        File file = new File("../txtdb/cartData.txt");
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -97,15 +97,15 @@ public class Cart implements ICart {
 
         // Read from file
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("../database/cartData.txt"));
-            ProductManager productManager = new ProductManager();
+            BufferedReader reader = new BufferedReader(new FileReader("../txtdb/cartData.txt"));
+            ProductDAO productDAO = new ProductDAO();
             String l;
             while ((l = reader.readLine()) != null) {
                 String[] parts = l.split("\\^~\\^");
 
                 // Only add product to cart if it belongs to the customer
                 if (parts[0].equals(customerEmail)) {
-                    Product p = productManager.searchProduct(Integer.parseInt(parts[1]));
+                    Product p = productDAO.searchProduct(Integer.parseInt(parts[1]));
                     if (p.getStock() >= Integer.parseInt(parts[2])) {
                         addProductToCart(p, Integer.parseInt(parts[2]));
                     } else if (p.getStock() > 0) {
@@ -121,8 +121,8 @@ public class Cart implements ICart {
 
     // Save cart to databse
     private void saveCartToFile() {
-        File inputFile = new File("../database/cartData.txt");
-        File tempFile = new File("../database/cartDataTemp.txt");
+        File inputFile = new File("../txtdb/cartData.txt");
+        File tempFile = new File("../txtdb/cartDataTemp.txt");
 
         // Create inputFile if it doesn't exist
         if(!inputFile.exists()) {
