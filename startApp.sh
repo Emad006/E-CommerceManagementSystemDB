@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Absolute path of MySQL Connector JAR
-CLASSPATH="lib/mysql-connector-j-9.2.0.jar"
+CLASSPATH="../lib/mysql-connector-j-9.2.0.jar"
 
 # Compile all Java files, including the gui.auth package
 javac -d bin -cp "$CLASSPATH" $(find . -name "*.java")
