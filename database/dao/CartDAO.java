@@ -123,4 +123,22 @@ public class CartDAO {
 
         return customerCart;
     }
+
+    public boolean isEmpty(int cartID) {
+        String fetchCartItemNoQuery = "SELECT COUNT(*) FROM CART_ITEMS WHERE CART_ID = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(fetchCartItemNoQuery)) {
+            ps.setInt(1, cartID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) == 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return true;
+    }
 }
