@@ -4,9 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
-import com.mysql.cj.x.protobuf.MysqlxPrepare.Prepare;
-
+import core.entities.Card;
 import database.connection.DatabaseConnection;
 
 public class CardDAO {
@@ -16,7 +16,8 @@ public class CardDAO {
         userDAO = new UserDAO();
     }
 
-    public void addCard(String customerEmail, String cardNumber, String expiryDate, int securityCode, String nameOnCard, String billingAddress) {
+    public void addCard(String customerEmail, String cardNumber, String expiryDate, int securityCode, String nameOnCard,
+            String billingAddress) {
         String cardExistsQuery = "SELECT CARD_NO FROM CARDS WHERE CARD_NO = ?";
         String addCardQuery = "INSERT INTO CARDS (CARD_NO, EXP_DATE, CCV, CARD_NAME, BILL_ADDR) VALUES (?, ?, ?, ?, ?)";
         String addUserCardRelationQuery = "INSERT INTO USER_CARD (USER_ID, CARD_NO) VALUES (?, ?)";
@@ -144,5 +145,29 @@ public class CardDAO {
             DatabaseConnection.closeQuietly(deleteCardUserStmt);
             DatabaseConnection.closeQuietly(conn);
         }
+    }
+
+    public ArrayList<Card> getCardsByCustomerEmail(String email) {
+        String getCardsQuery = "SELECT * FROM CARDS WHERE CARD_NO IN (SELECT CARD_NO FROM USER_CARD WHERE USER_ID = ?)";
+        ArrayList<Card> customerCards = new ArrayList<Card>();
+
+        // Fetch user ID from email
+        int userID = userDAO.getUserID(email);
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pr = conn.prepareStatement(getCardsQuery)) {
+            pr.setInt(1, userID);
+            try (ResultSet rs = pr.executeQuery()) {
+                while (rs.next()) {
+                    Card c = new Card(email, rs.getString("CARD_NO"), rs.getString("EXP_DATE").toString(),
+                            rs.getInt("CCV"), rs.getString("CARd_NAME"), rs.getString("BILL_ADDR"));
+                    customerCards.add(c);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return customerCards;
     }
 }
