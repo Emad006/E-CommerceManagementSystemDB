@@ -170,4 +170,62 @@ public class ProductDAO {
             e.printStackTrace();
         }
     }
+
+    // Get data for table
+    public String[][] getDataForTable() {
+        String countQuery = "SELECT COUNT(*) FROM PRODUCTS";
+        String fetchProductsQuery = "SELECT * FROM PRODUCTS";
+
+        Connection conn = null;
+        PreparedStatement countStmt = null;
+        PreparedStatement fetchStmt = null;
+        ResultSet countRs = null;
+        ResultSet fetchRs = null;
+
+        try {
+            conn = DatabaseConnection.getConnection();
+
+            // Get number of rows
+            countStmt = conn.prepareStatement(countQuery);
+            countRs = countStmt.executeQuery();
+
+            int rowCount;
+
+            if (countRs.next()) {
+                rowCount = countRs.getInt(1);
+            } else {
+                return new String[0][7];
+            }
+
+            // Fetch products
+            fetchStmt = conn.prepareStatement(fetchProductsQuery);
+            fetchRs = fetchStmt.executeQuery();
+
+            int i = 0;
+            String[][] data = new String[rowCount][7];
+
+            while (fetchRs.next()) {
+                data[i][0] = Integer.toString(fetchRs.getInt("PROD_ID"));
+                data[i][1] = fetchRs.getString("NAME");
+                data[i][2] = Double.toString(fetchRs.getDouble("PRICE"));
+                data[i][3] = Integer.toString(fetchRs.getInt("STOCK"));
+                data[i][4] = fetchRs.getString("CAT");
+                data[i][5] = fetchRs.getString("DESCRIP");
+                data[i][6] = fetchRs.getString("IMG_PATH");
+                i++;
+            }
+
+            return data;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DatabaseConnection.closeQuietly(fetchRs);
+            DatabaseConnection.closeQuietly(countRs);
+            DatabaseConnection.closeQuietly(fetchStmt);
+            DatabaseConnection.closeQuietly(countStmt);
+            DatabaseConnection.closeQuietly(conn);
+        }
+
+        return new String[0][7];
+    }
 }
