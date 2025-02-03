@@ -21,9 +21,10 @@ public class ProductDAO implements IProductDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pr = conn.prepareStatement(fetchProductsQuery)) {
             pr.setInt(1, id);
-            ResultSet rs = pr.executeQuery();
+            try (ResultSet rs = pr.executeQuery()) {
+                return rs.next();
+            }
 
-            return rs.next();
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -124,13 +125,14 @@ public class ProductDAO implements IProductDAO {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pr = conn.prepareStatement(searchProductQuery)) {
                 pr.setInt(1, id);
-                ResultSet rs = pr.executeQuery();
-
-                if (rs.next()) {
-                    return new Product(id, rs.getString("NAME"), rs.getDouble("PRICE"), rs.getInt("STOCK"), rs.getString("CAT"), rs.getString("DESCRIP"), rs.getString("IMG_PATH"));
-                } else {
-                    return null;
+                try (ResultSet rs = pr.executeQuery()) {
+                    if (rs.next()) {
+                        return new Product(id, rs.getString("NAME"), rs.getDouble("PRICE"), rs.getInt("STOCK"), rs.getString("CAT"), rs.getString("DESCRIP"), rs.getString("IMG_PATH"));
+                    } else {
+                        return null;
+                    }
                 }
+                
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -158,15 +160,16 @@ public class ProductDAO implements IProductDAO {
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pr = conn.prepareStatement(fetchProductsQuery)) {
-                ResultSet rs = pr.executeQuery();
+                try (ResultSet rs = pr.executeQuery()) {
+                    // Create a product object for each row and add to the array list
+                    while (rs.next()) {
+                        Product p = new Product(rs.getInt("PROD_ID"), rs.getString("NAME"), rs.getDouble("PRICE"), rs.getInt("STOCK"), rs.getString("CAT"), rs.getString("DESCRIP"), rs.getString("IMG_PATH"));
+                        productList.add(p);
+                    }
 
-                // Create a product object for each row and add to the array list
-                while (rs.next()) {
-                    Product p = new Product(rs.getInt("PROD_ID"), rs.getString("NAME"), rs.getDouble("PRICE"), rs.getInt("STOCK"), rs.getString("CAT"), rs.getString("DESCRIP"), rs.getString("IMG_PATH"));
-                    productList.add(p);
+                    return productList;
                 }
-
-                return productList;
+                
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -180,10 +183,12 @@ public class ProductDAO implements IProductDAO {
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(fetchCategoriesQuery)) {
-                ResultSet rs = ps.executeQuery();
-                while (rs.next()) {
-                    categories.add(rs.getString("CAT"));
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        categories.add(rs.getString("CAT"));
+                    }
                 }
+                
         } catch (SQLException e) {
             e.printStackTrace();
         }
