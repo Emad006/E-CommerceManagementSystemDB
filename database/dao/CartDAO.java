@@ -4,18 +4,22 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
+import core.entities.Product;
 import database.connection.DatabaseConnection;
 
 public class CartDAO {
     private UserDAO userDAO;
+    private ProductDAO productDAO;
 
     public CartDAO() {
         userDAO = new UserDAO();
+        productDAO = new ProductDAO();
     }
 
     public int getCartID(String customerEmail) {
-        String fetchCartQuery = "SELECT CARD_ID FROM CARTS WHERE USER_ID = ?";
+        String fetchCartQuery = "SELECT CART_ID FROM CARTS WHERE USER_ID = ?";
         int userID = userDAO.getUserID(customerEmail);
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -44,10 +48,10 @@ public class CartDAO {
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(addProductToCartQuery)) {
-                    ps.setInt(1, cartID);
-                    ps.setInt(2, productID);
-                    ps.setInt(3, quantity);
-                    ps.executeUpdate();
+            ps.setInt(1, cartID);
+            ps.setInt(2, productID);
+            ps.setInt(3, quantity);
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -58,9 +62,9 @@ public class CartDAO {
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(removeProductFromCartQuery)) {
-                    ps.setInt(1, cartID);
-                    ps.setInt(2, productID);
-                    ps.executeUpdate();
+            ps.setInt(1, cartID);
+            ps.setInt(2, productID);
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -71,10 +75,10 @@ public class CartDAO {
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(updateQuantityQuery)) {
-                    ps.setInt(1, quantity);
-                    ps.setInt(2, cartID);
-                    ps.setInt(3, productID);
-                    ps.executeUpdate();
+            ps.setInt(1, quantity);
+            ps.setInt(2, cartID);
+            ps.setInt(3, productID);
+            ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -85,17 +89,38 @@ public class CartDAO {
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(fetchQuantityQuery)) {
-                    ps.setInt(1, cartID);
-                    ps.setInt(2, productID);
-                    try (ResultSet rs = ps.executeQuery()) {
-                        if (rs.next()) {
-                            return rs.getInt("QUANTITY");
-                        }
-                    }
+            ps.setInt(1, cartID);
+            ps.setInt(2, productID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("QUANTITY");
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return 0;
+    }
+
+    public HashMap<Product, Integer> getCartHashMap(int cartID) {
+        String fetchCartQuery = "SELECT PROD_ID, QUANTITY FROM CART_ITEMS WHERE CART_ID = ?";
+        HashMap<Product, Integer> customerCart = new HashMap<Product, Integer>();
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(fetchCartQuery)) {
+            ps.setInt(1, cartID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Product p = productDAO.searchProduct(rs.getInt("PROD_ID"));
+                    int quantity = rs.getInt("QUANTITY");
+                    customerCart.put(p, quantity);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return customerCart;
     }
 }
