@@ -904,37 +904,37 @@ public class ManageUsersPanel {
 
     // List Users Panel
     public void showListUsersPanel() {
-        // mainPanel.removeAll();
-        // mainPanel.setLayout(new BorderLayout());
+        mainPanel.removeAll();
+        mainPanel.setLayout(new BorderLayout());
 
-        // // Title label
-        // JLabel listUsersLabel = new JLabel("List of Users");
-        // listUsersLabel.setFont(new Font("Serif", Font.BOLD, 30));
-        // listUsersLabel.setForeground(new Color(219, 226, 233));
-        // listUsersLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        // mainPanel.add(listUsersLabel, BorderLayout.NORTH);
+        // Title label
+        JLabel listUsersLabel = new JLabel("List of Users");
+        listUsersLabel.setFont(new Font("Serif", Font.BOLD, 30));
+        listUsersLabel.setForeground(new Color(219, 226, 233));
+        listUsersLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        mainPanel.add(listUsersLabel, BorderLayout.NORTH);
 
-        // // Column names
-        // String[] columnNames = { "Name", "Email", "Role", "Gender", "Contact", "Address" };
+        // Column names
+        String[] columnNames = { "Name", "Email", "Role", "Gender", "Contact", "Address" };
 
-        // // Sample data
-        // String[][] data = userDAO.getDataForTable();
+        // Sample data
+        String[][] data = userDAO.getDataForTable();
 
-        // // Create table with data
-        // JTable userTable = new JTable(data, columnNames);
-        // userTable.setFillsViewportHeight(true);
-        // userTable.setForeground(Color.WHITE); // Set text color for the table
-        // userTable.setBackground(new Color(40, 40, 40)); // Set background color for the table
+        // Create table with data
+        JTable userTable = new JTable(data, columnNames);
+        userTable.setFillsViewportHeight(true);
+        userTable.setForeground(Color.WHITE); // Set text color for the table
+        userTable.setBackground(new Color(40, 40, 40)); // Set background color for the table
 
-        // // Make table scrollable
-        // JScrollPane scrollPane = new JScrollPane(userTable);
-        // scrollPane.setPreferredSize(new Dimension(800, 600)); // Set preferred size for the scroll pane
+        // Make table scrollable
+        JScrollPane scrollPane = new JScrollPane(userTable);
+        scrollPane.setPreferredSize(new Dimension(800, 600)); // Set preferred size for the scroll pane
 
-        // // Add scroll pane to main panel
-        // mainPanel.add(scrollPane, BorderLayout.CENTER);
+        // Add scroll pane to main panel
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // mainPanel.revalidate();
-        // mainPanel.repaint();
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
 
     private boolean validEmail(String email) {

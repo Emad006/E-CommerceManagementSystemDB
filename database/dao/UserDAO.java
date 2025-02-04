@@ -412,4 +412,54 @@ public class UserDAO implements IUserDAO {
     // }
     // return data;
     // }
+
+    // Fixed method to get data for table
+    public String[][] getDataForTable() {
+        String countRowsQuery = "SELECT COUNT(*) FROM USERS";
+        String getDataQuery = "SELECT U.*, IFNULL(UD.GENDER, 'N/A') AS GENDER, IFNULL(UD.CONTACT_NO, 'N/A') AS CONTACT_NO, IFNULL(UD.ADDR, 'N/A') AS ADDR FROM USERS U LEFT JOIN USER_DETAIL UD ON U.USER_ID = UD.USER_ID";
+
+        Connection conn = null;
+        PreparedStatement countRowsStmt = null;
+        PreparedStatement getDataStmt = null;
+        ResultSet countRowsRs = null;
+        ResultSet getDataRs = null;
+
+        try {
+            conn = DatabaseConnection.getConnection();
+
+            // Get the number of rows
+            countRowsStmt = conn.prepareStatement(countRowsQuery);
+            countRowsRs = countRowsStmt.executeQuery();
+            if (countRowsRs.next()) {
+                int rowCount = countRowsRs.getInt(1);
+                String[][] data = new String[rowCount][6];
+
+                // Get the data
+                getDataStmt = conn.prepareStatement(getDataQuery);
+                getDataRs = getDataStmt.executeQuery();
+                if (getDataRs.next()) {
+                    int i = 0;
+                    while (getDataRs.next()) {
+                        data[i][0] = getDataRs.getString("NAME");
+                        data[i][1] = getDataRs.getString("EMAIL");
+                        data[i][2] = getDataRs.getString("ROLE");
+                        data[i][3] = getDataRs.getString("GENDER");
+                        data[i][4] = getDataRs.getString("CONTACT_NO");
+                        data[i][5] = getDataRs.getString("ADDR");
+                    }
+                    return data;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DatabaseConnection.closeQuietly(getDataRs);
+            DatabaseConnection.closeQuietly(countRowsRs);
+            DatabaseConnection.closeQuietly(getDataStmt);
+            DatabaseConnection.closeQuietly(countRowsStmt);
+            DatabaseConnection.closeQuietly(conn);
+        }
+
+        return new String[0][6];
+    }
 }
