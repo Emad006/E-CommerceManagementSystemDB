@@ -18,6 +18,7 @@ public class CardDAO {
 
     public void addCard(String customerEmail, String cardNumber, String expiryDate, int securityCode, String nameOnCard,
             String billingAddress) {
+        // System.out.println("✅ Executing CardDAO->addCard() ✅");
         String cardExistsQuery = "SELECT CARD_NO FROM CARDS WHERE CARD_NO = ?";
         String addCardQuery = "INSERT INTO CARDS (CARD_NO, EXP_DATE, CCV, CARD_NAME, BILL_ADDR) VALUES (?, ?, ?, ?, ?)";
         String addUserCardRelationQuery = "INSERT INTO USER_CARD (USER_ID, CARD_NO) VALUES (?, ?)";
@@ -88,6 +89,7 @@ public class CardDAO {
     }
 
     public void deleteCard(String customerEmail, String cardNumber) {
+        // System.out.println("✅ Executing CardDAO->deleteCard() ✅");
         String deleteCardUserQuery = "DELETE FROM USER_CARD WHERE USER_ID = ? AND CARD_NO = ?";
         String countCardUsersQuery = "SELECT COUNT(*) FROM USER_CARD WHERE CARD_NO = ?";
         String deleteCardQuery = "DELETE FROM CARDS WHERE CARD_NO = ?";
@@ -148,6 +150,7 @@ public class CardDAO {
     }
 
     public ArrayList<Card> getCardsByCustomerEmail(String email) {
+        // System.out.println("✅ Executing CardDAO->getCardsByCustomerEmail() ✅");
         String getCardsQuery = "SELECT * FROM CARDS WHERE CARD_NO IN (SELECT CARD_NO FROM USER_CARD WHERE USER_ID = ?)";
         ArrayList<Card> customerCards = new ArrayList<Card>();
 
@@ -179,6 +182,7 @@ public class CardDAO {
     }
 
     public boolean cardExistsOnUserAccount(String customerEmail, String cardNumber) {
+        // System.out.println("✅ Executing CardDAO->cardExistsOnUserAccount() ✅");
         String cardExistsQuery = "SELECT COUNT(*) FROM USER_CARD WHERE USER_ID = ? AND CARD_NO = ?";
         int userID = userDAO.getUserID(customerEmail);
 
@@ -199,6 +203,7 @@ public class CardDAO {
     }
 
     public String[][] getDataForTable(String email) {
+        // System.out.println("✅ Executing CardDAO->getDataForTable() ✅");
         String getUserCardsQuery = "SELECT * FROM CARDS WHERE CARD_NO IN (SELECT CARD_NO FROM USER_CARD WHERE USER_ID = ?)";
         ArrayList<Card> customerCards = getCardsByCustomerEmail(email);
         String[][] data = new String[customerCards.size()][5];
