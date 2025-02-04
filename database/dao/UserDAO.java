@@ -446,6 +446,7 @@ public class UserDAO implements IUserDAO {
                         data[i][3] = getDataRs.getString("GENDER");
                         data[i][4] = getDataRs.getString("CONTACT_NO");
                         data[i][5] = getDataRs.getString("ADDR");
+                        i++;
                     }
                     return data;
                 }
