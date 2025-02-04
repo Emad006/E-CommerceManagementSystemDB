@@ -19,6 +19,7 @@ public class CartDAO {
     }
 
     public int getCartID(String customerEmail) {
+        // System.out.println("✅ Executing CartDAO->getCartID() ✅");
         String fetchCartQuery = "SELECT CART_ID FROM CARTS WHERE USER_ID = ?";
         int userID = userDAO.getUserID(customerEmail);
 
@@ -37,6 +38,7 @@ public class CartDAO {
     }
 
     public void addProductToCart(int cartID, int productID, int quantity) {
+        // System.out.println("✅ Executing CartDAO->addProductToCart() ✅");
         String addProductToCartQuery = "INSERT INTO CART_ITEMS (CART_ID, PROD_ID, QUANTITY) VALUES (?, ?, ?)";
 
         // Check if product already in cart, if so, then update quantity
@@ -58,6 +60,7 @@ public class CartDAO {
     }
 
     public void removeProductFromCart(int cartID, int productID) {
+        // System.out.println("✅ Executing CartDAO->removeProductFromCart() ✅");
         String removeProductFromCartQuery = "DELETE FROM CART_ITEMS WHERE CART_ID = ? AND PROD_ID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -71,6 +74,7 @@ public class CartDAO {
     }
 
     public void updateQuantity(int cartID, int productID, int quantity) {
+        // System.out.println("✅ Executing CartDAO->updateQuantity() ✅");
         String updateQuantityQuery = "UPDATE CART_ITEMS SET QUANTITY = ? WHERE CART_ID = ? AND PROD_ID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -85,6 +89,7 @@ public class CartDAO {
     }
 
     public int getProductQuantityInCart(int cartID, int productID) {
+        // System.out.println("✅ Executing CartDAO->getProductQuantityInCart() ✅");
         String fetchQuantityQuery = "SELECT QUANTITY FROM CART_ITEMS WHERE CART_ID = ? AND PROD_ID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -104,6 +109,7 @@ public class CartDAO {
     }
 
     public HashMap<Product, Integer> getCartHashMap(int cartID) {
+        // System.out.println("✅ Executing CartDAO->getCartHashMap() ✅");
         String fetchCartQuery = "SELECT PROD_ID, QUANTITY FROM CART_ITEMS WHERE CART_ID = ?";
         HashMap<Product, Integer> customerCart = new HashMap<Product, Integer>();
 
@@ -125,6 +131,7 @@ public class CartDAO {
     }
 
     public boolean isEmpty(int cartID) {
+        // System.out.println("✅ Executing CartDAO->isEmpty() ✅");
         String fetchCartItemNoQuery = "SELECT COUNT(*) FROM CART_ITEMS WHERE CART_ID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -143,6 +150,7 @@ public class CartDAO {
     }
 
     public void clearCart(int cartID) {
+        // System.out.println("✅ Executing CartDAO->clearCart() ✅");
         String clearCartQuery = "DELETE FROM CART_ITEMS WHERE CART_ID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -155,6 +163,7 @@ public class CartDAO {
     }
 
     public double getTotal(int cartID) {
+        // System.out.println("✅ Executing CartDAO->getTotal() ✅");
         HashMap<Product, Integer> cartItems = getCartHashMap(cartID);
         double total = 0;
 

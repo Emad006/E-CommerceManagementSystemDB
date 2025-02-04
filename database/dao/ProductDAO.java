@@ -136,7 +136,7 @@ public class ProductDAO implements IProductDAO {
 
     // Deduct stock after checkout
     public void deductStock(int id, int quantity) {
-        System.out.println("✅ Executing ProductDAO->deductStock() ✅");
+        // System.out.println("✅ Executing ProductDAO->deductStock() ✅");
         String deductStockQuery = "UPDATE PRODUCTS SET STOCK = STOCK - ? WHERE PROD_ID = ?";
 
         try(Connection conn = DatabaseConnection.getConnection();
@@ -151,7 +151,7 @@ public class ProductDAO implements IProductDAO {
 
     // Get all products
     public ArrayList<Product> getAllProducts() {
-        System.out.println("✅ Executing ProductDAO->getAllProducts() ✅");
+        // System.out.println("✅ Executing ProductDAO->getAllProducts() ✅");
         String fetchProductsQuery = "SELECT * FROM PRODUCTS";
         ArrayList<Product> productList = new ArrayList<Product>();
 
@@ -175,7 +175,7 @@ public class ProductDAO implements IProductDAO {
 
     // Get all categories
     public String[] getAllCategories() {
-        System.out.println("✅ Executing ProductDAO->getAllCategories() ✅");
+        // System.out.println("✅ Executing ProductDAO->getAllCategories() ✅");
         String fetchCategoriesQuery = "SELECT DISTINCT CAT FROM PRODUCTS";
         ArrayList<String> categories = new ArrayList<String>();
 
