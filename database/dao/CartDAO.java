@@ -27,7 +27,7 @@ public class CartDAO {
             ps.setInt(1, userID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("CARD_ID");
+                    return rs.getInt("CART_ID");
                 }
             }
         } catch (SQLException e) {
@@ -140,5 +140,28 @@ public class CartDAO {
         }
     
         return true;
+    }
+
+    public void clearCart(int cartID) {
+        String clearCartQuery = "DELETE FROM CART_ITEMS WHERE CART_ID = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(clearCartQuery)) {
+            ps.setInt(1, cartID);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public double getTotal(int cartID) {
+        HashMap<Product, Integer> cartItems = getCartHashMap(cartID);
+        double total = 0;
+
+        for (Product p : cartItems.keySet()) {
+            total += p.getPrice() * cartItems.get(p);
+        }
+
+        return total;
     }
 }
