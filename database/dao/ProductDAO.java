@@ -16,6 +16,7 @@ public class ProductDAO implements IProductDAO {
 
     // TODO: Validate ID in front-end
     public boolean productExists(int id) {
+        // System.out.println("✅ Executing ProductDAO->productExists() ✅");
         String fetchProductsQuery = "SELECT PROD_ID FROM PRODUCTS WHERE PROD_ID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -34,14 +35,8 @@ public class ProductDAO implements IProductDAO {
     // Add product with provided image path
     // TODO: Validate data in front-end
     public void addProduct(int id, String name, double price, int stock, String category, String desc, String imagePath) {
-        String addProductQuery;
-
-        // Check if image path is null
-        if (imagePath == null) { // Avoid inserting image path (will use default image)
-            addProductQuery = "INSERT INTO PRODUCTS (PROD_ID, PROD_NAME, PROD_PRICE, PROD_STOCK, PROD_CATEGORY, PROD_DESC) VALUES (?, ?, ?, ?, ?, ?)";
-        } else { // Insert image path
-            addProductQuery = "INSERT INTO PRODUCTS (PROD_ID, PROD_NAME, PROD_PRICE, PROD_STOCK, PROD_CATEGORY, PROD_DESC, PROD_IMAGE) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        }
+        // System.out.println("✅ Executing ProductDAO->addProduct() (W/ IMG_PATH) ✅");
+        String addProductQuery = "INSERT INTO PRODUCTS (PROD_ID, NAME, PRICE, STOCK, CAT, DESCRIP, IMG_PATH) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pr = conn.prepareStatement(addProductQuery)) {
@@ -55,6 +50,8 @@ public class ProductDAO implements IProductDAO {
                 // Set image path if not null
                 if (imagePath != null) {
                     pr.setString(7, imagePath);
+                } else {
+                    pr.setString(7, "../assets/images/productAssets/defaultProductIcon.jpg");
                 }
 
                 pr.executeUpdate();
@@ -65,19 +62,14 @@ public class ProductDAO implements IProductDAO {
 
     // Add product with deafault image
     public void addProduct(int id, String name, double price, int stock, String category, String desc) {
+        // System.out.println("✅ Executing ProductDAO->addProduct() (NO IMG_PATH) ✅");
         addProduct(id, name, price, stock, category, desc, null);
     }
 
     // Edit product with provided image path
     public void editProduct(int id, String name, double price, int stock, String category, String desc, String imagePath) {
-        String editProductQuery;
-
-        // Check if image path is null
-        if (imagePath == null) { // Avoid updating image path
-            editProductQuery = "UPDATE PRODUCTS SET PROD_NAME = ?, PROD_PRICE = ?, PROD_STOCK = ?, PROD_CATEGORY = ?, PROD_DESC = ? WHERE PROD_ID = ?";
-        } else { // Update image path
-            editProductQuery = "UPDATE PRODUCTS SET PROD_NAME = ?, PROD_PRICE = ?, PROD_STOCK = ?, PROD_CATEGORY = ?, PROD_DESC = ?, PROD_IMAGE = ? WHERE PROD_ID = ?";
-        }
+        // System.out.println("✅ Executing ProductDAO->editProduct() (W/ IMG_PATH) ✅");
+        String editProductQuery = "UPDATE PRODUCTS SET NAME = ?, PRICE = ?, STOCK = ?, CAT = ?, DESCRIP = ?, IMG_PATH = ? WHERE PROD_ID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pr = conn.prepareStatement(editProductQuery)) {
@@ -90,10 +82,10 @@ public class ProductDAO implements IProductDAO {
                 // Set image path if not null
                 if (imagePath != null) {
                     pr.setString(6, imagePath);
-                    pr.setInt(7, id);
                 } else {
-                    pr.setInt(6, id);
+                    pr.setString(6, "../assets/images/productAssets/defaultProductIcon.jpg");
                 }
+                pr.setInt(7, id);
 
                 pr.executeUpdate();
         } catch (SQLException e) {
@@ -103,11 +95,13 @@ public class ProductDAO implements IProductDAO {
 
     // Edit product with default image
     public void editProduct(int id, String name, double price, int stock, String category, String desc) {
+        // System.out.println("✅ Executing ProductDAO->editProduct() (NO IMG_PATH) ✅");
         editProduct(id, name, price, stock, category, desc, null);
     }
 
     // Delete product
     public void deleteProduct(int id) {
+        // System.out.println("✅ Executing ProductDAO->deleteProduct() ✅");
         String deleteProductQuery = "DELETE FROM PRODUCTS WHERE PROD_ID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -120,6 +114,7 @@ public class ProductDAO implements IProductDAO {
     }
 
     public Product searchProduct(int id) {
+        // System.out.println("✅ Executing ProductDAO->searchProduct() ✅");
         String searchProductQuery = "SELECT * FROM PRODUCTS WHERE PROD_ID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -141,6 +136,7 @@ public class ProductDAO implements IProductDAO {
 
     // Deduct stock after checkout
     public void deductStock(int id, int quantity) {
+        System.out.println("✅ Executing ProductDAO->deductStock() ✅");
         String deductStockQuery = "UPDATE PRODUCTS SET STOCK = STOCK - ? WHERE PROD_ID = ?";
 
         try(Connection conn = DatabaseConnection.getConnection();
@@ -155,6 +151,7 @@ public class ProductDAO implements IProductDAO {
 
     // Get all products
     public ArrayList<Product> getAllProducts() {
+        System.out.println("✅ Executing ProductDAO->getAllProducts() ✅");
         String fetchProductsQuery = "SELECT * FROM PRODUCTS";
         ArrayList<Product> productList = new ArrayList<Product>();
 
@@ -178,6 +175,7 @@ public class ProductDAO implements IProductDAO {
 
     // Get all categories
     public String[] getAllCategories() {
+        System.out.println("✅ Executing ProductDAO->getAllCategories() ✅");
         String fetchCategoriesQuery = "SELECT DISTINCT CAT FROM PRODUCTS";
         ArrayList<String> categories = new ArrayList<String>();
 
@@ -198,6 +196,7 @@ public class ProductDAO implements IProductDAO {
 
     // Get data for table
     public String[][] getDataForTable() {
+        // System.out.println("✅ Executing ProductDAO->getDataForTable() ✅");
         String countQuery = "SELECT COUNT(*) FROM PRODUCTS";
         String fetchProductsQuery = "SELECT * FROM PRODUCTS";
 
