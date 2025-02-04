@@ -20,6 +20,7 @@ public class UserDAO implements IUserDAO {
 
     // Get ID from email
     public int getUserID(String email) {
+        // System.out.println("✅ Executing UserDAO->getUserID() ✅");
         String getUserIDQuery = "SELECT USER_ID FROM USERS WHERE EMAIL = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -41,6 +42,7 @@ public class UserDAO implements IUserDAO {
 
     // Check if user already exist by ID
     public boolean userExists(int id) {
+        // System.out.println("✅ Executing UserDAO->userExists(int id) ✅");
         String userExistsQuery = "SELECT * FROM USERS WHERE USER_ID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -58,11 +60,13 @@ public class UserDAO implements IUserDAO {
 
     // Check if user already exists by email
     public boolean userExists(String email) {
+        // System.out.println("✅ Executing UserDAO->userExists(String email) ✅");
         return userExists(getUserID(email));
     }
 
     // Check if credentials are valid
     public boolean validCredentials(String email, String password) {
+        // System.out.println("✅ Executing UserDAO->validCredentials() ✅");
         String validCredentialsQuery = "SELECT * FROM USERS WHERE EMAIL = ? AND PWD = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -83,6 +87,7 @@ public class UserDAO implements IUserDAO {
     // Admin)
     // TODO: Validate data in front-end
     public void addUser(String name, String email, String password, String role) {
+        // System.out.println("✅ Executing UserDAO->addUser() (ADMIN) ✅");
         // Admin a = new Admin(name, email, password, role);
 
         String createUserQuery = "INSERT INTO USERS (NAME, EMAIL, PWD, ROLE) VALUES (?, ?, ?, ?)";
@@ -104,6 +109,7 @@ public class UserDAO implements IUserDAO {
     // TODO: Validate data in front-end
     public void addUser(String name, String email, String password, String role, String gender, String contactNo,
             String address) {
+        // System.out.println("✅ Executing UserDAO->addUser() (CUSTOMER, WORKER) ✅");
         String createUserQuery = "INSERT INTO USERS (NAME, EMAIL, PWD, ROLE) VALUES (?, ?, ?, ?)";
         String insertUserDetailQuery = "INSERT INTO USER_DETAIL (USER_ID, GENDER, CONTACT_NO, ADDR) VALUES (?, ?, ?, ?)";
         String createCartQuery = "INSERT INTO CARTS (USER_ID) VALUES (?)";
@@ -187,6 +193,7 @@ public class UserDAO implements IUserDAO {
     // Delete user by ID
     // TODO: Validate ID in front-end || Just check if the userExists
     public void deleteUser(int id) {
+        // System.out.println("✅ Executing UserDAO->deleteUser(int id) ✅");
         String deleteUserQuery = "DELETE FROM USERS WHERE USER_ID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -200,6 +207,7 @@ public class UserDAO implements IUserDAO {
 
     // Delete user by email
     public void deleteUser(String email) {
+        // System.out.println("✅ Executing UserDAO->deleteUser(String email) ✅");
         deleteUser(getUserID(email));
     }
 
@@ -207,6 +215,7 @@ public class UserDAO implements IUserDAO {
     // TODO: Catch NullPointerException in front-end and notify user that the user
     // does not exist.
     public User searchUser(int id) {
+        // System.out.println("✅ Executing UserDAO->searchUser(int id) ✅");
         String searchUserQuery = "SELECT * FROM USERS WHERE USER_ID = ?";
         String searchUserDetailQuery = "SELECT * FROM USER_DETAIL WHERE USER_ID = ?";
 
@@ -270,6 +279,7 @@ public class UserDAO implements IUserDAO {
 
     // Search user by email (return user object)
     public User searchUser(String email) {
+        // System.out.println("✅ Executing UserDAO->searchUser(String email) ✅");
         return searchUser(getUserID(email));
     }
 
@@ -294,6 +304,7 @@ public class UserDAO implements IUserDAO {
     // Update user (Customer || Worker)
     public boolean updateUser(int id, String name, String email, String password, String role, String gender,
             String contactNo, String address) {
+        // System.out.println("✅ Executing UserDAO->updateUser() (CUSTOMER, WORKER) ✅");
         String updateUserQuery = "UPDATE USERS SET NAME = ?, PWD = ?, ROLE = ? WHERE USER_ID = ?";
         String updateUserDetailQuery = "UPDATE USER_DETAIL SET GENDER = ?, CONTACT_NO = ?, ADDR = ? WHERE USER_ID = ?";
 
@@ -354,13 +365,15 @@ public class UserDAO implements IUserDAO {
 
     // Update user (Admin)
     public boolean updateUser(int id, String name, String email, String password, String role) {
-        String updateUserQuery = "UPDATE USERS SET NAME = ?, PWD = ?, ROLE = ?";
+        // System.out.println("✅ Executing UserDAO->updateUser() (ADMIN) ✅");
+        String updateUserQuery = "UPDATE USERS SET NAME = ?, PWD = ?, ROLE = ? WHERE USER_ID = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement pr = conn.prepareStatement(updateUserQuery)) {
             pr.setString(1, name);
             pr.setString(2, password);
             pr.setString(3, role);
+            pr.setInt(4, id);
             pr.executeUpdate();
             return true;
         } catch (SQLException e) {
